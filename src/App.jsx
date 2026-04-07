@@ -4,13 +4,23 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 
+// 1. We IMPORT our component file here
+import NavBar from './components/ui/Nav-Bar'
+
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="text-[50px]">
-      Fuck you Sho & Friend
-    </div>
+    <>
+      <NavBar 
+        title="GymTime" 
+        links={[
+          { text: "Home", url: "/" },
+          { text: "Workouts", url: "/workouts" },
+          { text: "Profile", url: "/profile" }
+        ]} 
+      />
+    </>
   )
 }
 
