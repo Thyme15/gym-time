@@ -6,12 +6,16 @@ import './App.css'
 
 // 1. We IMPORT our component file here
 import NavBar from './components/ui/Nav-Bar'
+import AdminBar from './components/ui/Admin-Bar'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
+      <AdminBar 
+        title="Hercules"
+      />
       <NavBar 
         title="GymTime" 
         links={[
