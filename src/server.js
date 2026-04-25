@@ -2,11 +2,14 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mysql from 'mysql2';
+import path from 'path';
 
 const app = express();
 
 app.use(cors()); 
 app.use(express.json()); 
+
+app.use(express.static(path.join(process.cwd(), 'dist')));
 
 const connection = mysql.createConnection({
     host: process.env.MYSQL_HOST,
@@ -224,6 +227,11 @@ app.delete('/products/:id', (req, res) => {
         }
         res.send({ status: "success", message: "Product deleted successfully" });
     });
+});
+
+// Catch-all handler: send back index.html for client-side routing
+app.use((req, res) => {
+    res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;

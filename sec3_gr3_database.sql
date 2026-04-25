@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS `Gym-Time`;
+USE `Gym-Time`;
+
 -- MySQL dump 10.13  Distrib 9.4.0, for macos15 (arm64)
 --
 -- Host: localhost    Database: Gym-Time
