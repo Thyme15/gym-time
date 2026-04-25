@@ -48,6 +48,7 @@ export default function Products() {
             {products.map((product) => (
               <div key={product.product_ID} style={{ display: 'flex', justifyContent: 'center' }}>
                 <ProductCard
+                  id={product.product_ID}
                   image={product.product_image || `https://placehold.co/300x400/111111/c9a22a?text=${encodeURIComponent(product.product_name)}`}
                   title={product.product_name}
                   originalPrice={product.product_price}

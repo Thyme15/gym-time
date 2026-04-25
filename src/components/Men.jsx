@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 import ProductCard from './ui/productImage';
 
-export default function Home() {
+export default function Men() {
   const navigate = useNavigate();
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [products, setProducts] = useState([]);
@@ -35,46 +35,18 @@ export default function Home() {
 
   return (
     <div style={{ fontFamily: 'sans-serif' }}>
-      {/* Navbar */}
       <Navbar title="HERCULES" />
 
-      {/* Hero Section */}
-      <div
-        style={{
-          backgroundImage: 'url(https://via.placeholder.com/1200x400?text=Hercules+Hero)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: '500px',
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
-          }}
-        />
-        <h1
-          style={{
-            color: 'white',
-            fontSize: '72px',
-            fontWeight: 'bold',
-            letterSpacing: '4px',
-            textAlign: 'center',
-            position: 'relative',
-            zIndex: 1,
-            textTransform: 'uppercase',
-          }}
-        >
-          Hercules
-        </h1>
+      {/* Hero Section - Men */}
+      <div style={{ display: 'flex', width: '100%', height: '500px' }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <img 
+            key={i}
+            src={`https://placehold.co/400x600/222/c9a22a?text=Men+${i}`} 
+            style={{ flex: 1, objectFit: 'cover', width: '20%' }} 
+            alt={`Men ${i}`} 
+          />
+        ))}
       </div>
 
       {/* NEW ARRIVED Section */}

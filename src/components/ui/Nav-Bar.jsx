@@ -25,7 +25,7 @@ export default function Navbar(prop) {
 
             <div style={{ display: 'flex', gap: '24px', cursor: 'pointer', flex: 1, justifyContent: 'flex-end', alignItem: 'center'}}>
                 <ShoppingBag size={24} strokeWidth={1.5} onClick={() => navigate('/cart')} style={{ cursor: 'pointer' }} />
-                <Heart size={24} strokeWidth={1.5} />
+                <Heart size={24} strokeWidth={1.5} onClick={() => navigate('/wishlist')} style={{ cursor: 'pointer' }} />
                 <User size={24} strokeWidth={1.5} onClick={() => navigate('/login')} style={{ cursor: 'pointer' }} />
             </div>
         </div>
@@ -47,8 +47,8 @@ export default function Navbar(prop) {
 
       {/* --- 3. GREY CATEGORY BAR --- */}
       <div style={{backgroundColor: '#f4f4f4', padding: '12px 40px', display: 'flex', gap: '30px', borderTop: '2px solid #ddd', borderBottom: '2px solid #ddd', fontSize: '14px', letterSpacing: '0.5px'}}>
-        <span style={{cursor: 'pointer'}}>Women</span>
-        <span style={{cursor: 'pointer'}}>Men</span>
+        <span style={{cursor: 'pointer'}} onClick={() => navigate('/women')}>Women</span>
+        <span style={{cursor: 'pointer'}} onClick={() => navigate('/men')}>Men</span>
         <span style={{cursor: 'pointer'}}>Shoes</span>
         <span style={{cursor: 'pointer'}}>Accessories</span>
         <span style={{cursor: 'pointer'}}>About Us</span>

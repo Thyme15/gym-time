@@ -1,15 +1,36 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert('Please select a size');
+      return;
+    }
+    const item = {
+      id: product.product_id || id,
+      name: product.product_name,
+      price: product.product_price,
+      size: selectedSize,
+      qty: quantity,
+      image: product.product_image
+    };
+    const savedCart = localStorage.getItem('cart');
+    const cart = savedCart ? JSON.parse(savedCart) : [];
+    cart.push(item);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    navigate('/cart');
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -178,7 +199,7 @@ export default function ProductDetail() {
 
           {/* Add to Cart */}
           <button
-            onClick={() => alert(`Added ${quantity}x ${product.product_name} (${selectedSize || 'No size selected'}) to cart`)}
+            onClick={handleAddToCart}
             style={{
               width: '100%',
               maxWidth: '340px',

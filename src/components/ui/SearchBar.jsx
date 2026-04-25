@@ -1,28 +1,25 @@
-import { Search } from 'lucide-react';
+import { Search as SearchIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SearchBar() {
+  const navigate = useNavigate();
+
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center', // Fix vertical alignment
-      backgroundColor: '#ebdabc', // Beige color from the image
-      borderRadius: '20px',
-      padding: '8px 16px',
-      width: '100%',
-      maxWidth: '800px', // Nice and wide like in the image
-    }}>
-      <Search size={18} color="#555" strokeWidth={1.5} style={{ marginRight: '10px' }} />
-      <input 
-        type="text" 
-        style={{
-          border: 'none',
-          backgroundColor: 'transparent',
-          outline: 'none',
-          width: '100%',
-          fontSize: '15px',
-          color: '#000'
-        }}
-      />
+    <div 
+      onClick={() => navigate('/search')}
+      style={{
+        display: 'flex',
+        alignItems: 'center', 
+        backgroundColor: '#ebdabc', 
+        borderRadius: '20px',
+        padding: '8px 16px',
+        width: '100%',
+        maxWidth: '800px', 
+        cursor: 'pointer',
+        height: '36px',
+        boxSizing: 'border-box'
+      }}>
+      <SearchIcon size={18} color="#555" strokeWidth={1.5} style={{ marginRight: '10px' }} />
     </div>
   );
 }
