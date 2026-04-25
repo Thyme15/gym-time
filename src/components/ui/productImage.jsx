@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart, Star } from "lucide-react";
 
 const GT_LOGO = () => (
@@ -40,8 +40,33 @@ export default function ProductCard({
   ratingCount = 128,
   badge = "LIMITED EDITION",
   onClick = null,
+  id = null,
 }) {
   const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    setLiked(wishlist.some(item => item.id === id));
+  }, [id]);
+
+  const handleToggleFavorite = (e) => {
+    e.stopPropagation();
+    if (!id) return;
+
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const isCurrentlyLiked = wishlist.some(item => item.id === id);
+
+    let newWishlist;
+    if (isCurrentlyLiked) {
+      newWishlist = wishlist.filter(item => item.id !== id);
+      setLiked(false);
+    } else {
+      newWishlist = [...wishlist, { id, title, image, price: originalPrice }];
+      setLiked(true);
+    }
+    localStorage.setItem('wishlist', JSON.stringify(newWishlist));
+  };
   const [activeColor, setActiveColor] = useState(0);
 
   const stars = Array.from({ length: 5 }, (_, i) => {
@@ -257,7 +282,7 @@ export default function ProductCard({
 
           <button
             className={`gt-heart${liked ? " liked" : ""}`}
-            onClick={(e) => { e.stopPropagation(); setLiked((v) => !v); }}
+            onClick={handleToggleFavorite}
             aria-label="Add to favorites"
           >
             <Heart size={16} strokeWidth={2} />
