@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 import ProductCard from './ui/productImage';
 
 export default function Products() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -10,7 +12,7 @@ export default function Products() {
     // Fetch products from your backend
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/products');
+        const response = await fetch('/api/products');
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -46,11 +48,12 @@ export default function Products() {
             {products.map((product) => (
               <div key={product.product_ID} style={{ display: 'flex', justifyContent: 'center' }}>
                 <ProductCard
-                  image="https://via.placeholder.com/300x400?text=Product"
+                  image={product.product_image || `https://placehold.co/300x400/111111/c9a22a?text=${encodeURIComponent(product.product_name)}`}
                   title={product.product_name}
                   originalPrice={product.product_price}
                   rating={4.5}
                   ratingCount={100}
+                  onClick={() => navigate(`/products/${product.product_ID}`)}
                 />
               </div>
             ))}

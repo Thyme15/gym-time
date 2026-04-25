@@ -1,83 +1,37 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 import ProductCard from './ui/productImage';
 
 export default function Home() {
+  const navigate = useNavigate();
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [products, setProducts] = useState([]);
 
-  // Sample products for "NEW ARRIVED" carousel
-  const newArrivedProducts = [
-    {
-      image: 'https://via.placeholder.com/300x300?text=Product+1',
-      title: 'Hercules Gold Shoes',
-      originalPrice: 2500,
-    },
-    {
-      image: 'https://via.placeholder.com/300x300?text=Product+2',
-      title: 'Hercules Silver Shoes',
-      originalPrice: 2800,
-    },
-    {
-      image: 'https://via.placeholder.com/300x300?text=Product+3',
-      title: 'Hercules Gold Shoes 2',
-      originalPrice: 3000,
-    },
-  ];
+  useEffect(() => {
+    fetch('/api/products')
+      .then((r) => r.json())
+      .then((data) => setProducts(Array.isArray(data) ? data : []))
+      .catch((err) => console.error('Error fetching products:', err));
+  }, []);
 
-  // Sample products for "SEASONAL PRODUCTS" grid
-  const seasonalProducts = [
-    {
-      image: 'https://via.placeholder.com/300x400?text=Compression+Tee',
-      title: 'Hercules Compression Tee',
-      category: 'UNISEX',
-      sizes: 'XS–3XL',
-      originalPrice: 2500,
-      rating: 4.8,
-      ratingCount: 128,
-      badge: 'LIMITED EDITION',
-      colors: [
-        { label: 'White Gold', hex: '#f5f5f0' },
-        { label: 'Obsidian', hex: '#1a1a1a' },
-      ],
-    },
-    {
-      image: 'https://via.placeholder.com/300x400?text=Sport+Bag',
-      title: 'Hercules Golden Sport Bag',
-      category: 'UNISEX',
-      sizes: 'ONE SIZE',
-      originalPrice: 6400,
-      rating: 4.6,
-      ratingCount: 95,
-      badge: 'LIMITED EDITION',
-      colors: [
-        { label: 'Gold', hex: '#c9a84c' },
-        { label: 'Black', hex: '#1a1a1a' },
-      ],
-    },
-    {
-      image: 'https://via.placeholder.com/300x400?text=Sport+Bottle',
-      title: 'Hercules Golden Sport Bottle 24oz',
-      category: 'UNISEX',
-      sizes: 'ONE SIZE',
-      originalPrice: 1500,
-      rating: 4.9,
-      ratingCount: 156,
-      badge: 'LIMITED EDITION',
-      colors: [
-        { label: 'Gold', hex: '#c9a84c' },
-        { label: 'Silver', hex: '#d3d3d3' },
-      ],
-    },
-  ];
+  // First 3 products → new arrivals carousel
+  const newArrivedProducts = products.slice(0, 3);
+  // Rest → seasonal section (or all if fewer than 4)
+  const seasonalProducts = products.length > 3 ? products.slice(3) : products;
 
   const handlePrevCarousel = () => {
-    setCarouselIndex((prev) => (prev - 1 + newArrivedProducts.length) % newArrivedProducts.length);
+    setCarouselIndex((prev) => (prev - 1 + Math.max(newArrivedProducts.length, 1)) % Math.max(newArrivedProducts.length, 1));
   };
 
   const handleNextCarousel = () => {
-    setCarouselIndex((prev) => (prev + 1) % newArrivedProducts.length);
+    setCarouselIndex((prev) => (prev + 1) % Math.max(newArrivedProducts.length, 1));
   };
+
+  const productImage = (p) =>
+    p.product_image ||
+    `https://placehold.co/300x400/111111/c9a22a?text=${encodeURIComponent(p.product_name)}`;
 
   return (
     <div style={{ fontFamily: 'sans-serif' }}>
@@ -164,28 +118,23 @@ export default function Home() {
           <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', overflow: 'hidden' }}>
             {newArrivedProducts.map((product, index) => (
               <div
-                key={index}
+                key={product.product_ID || index}
+                onClick={() => navigate(`/products/${product.product_ID}`)}
                 style={{
                   opacity: index === carouselIndex ? 1 : 0.5,
                   transform: `scale(${index === carouselIndex ? 1 : 0.9})`,
                   transition: 'all 0.3s ease',
                   minWidth: '200px',
+                  cursor: 'pointer',
                 }}
               >
                 <img
-                  src={product.image}
-                  alt={product.title}
+                  src={productImage(product)}
+                  alt={product.product_name}
                   style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px' }}
                 />
-                <p
-                  style={{
-                    textAlign: 'center',
-                    marginTop: '10px',
-                    fontWeight: '600',
-                    fontSize: '14px',
-                  }}
-                >
-                  {product.title}
+                <p style={{ textAlign: 'center', marginTop: '10px', fontWeight: '600', fontSize: '14px' }}>
+                  {product.product_name}
                 </p>
               </div>
             ))}
@@ -263,8 +212,16 @@ export default function Home() {
           }}
         >
           {seasonalProducts.map((product, index) => (
-            <div key={index} style={{ display: 'flex', justifyContent: 'center' }}>
-              <ProductCard {...product} />
+            <div key={product.product_ID || index} style={{ display: 'flex', justifyContent: 'center' }}>
+              <ProductCard
+                image={productImage(product)}
+                title={product.product_name}
+                originalPrice={product.product_price}
+                rating={4.8}
+                ratingCount={128}
+                badge="LIMITED EDITION"
+                onClick={() => navigate(`/products/${product.product_ID}`)}
+              />
             </div>
           ))}
         </div>

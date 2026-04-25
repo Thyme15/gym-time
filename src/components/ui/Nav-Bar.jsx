@@ -1,7 +1,9 @@
 import { Menu, ShoppingBag, Heart, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 
 export default function Navbar(prop) {
+  const navigate = useNavigate();
 
   return (
     <header style={{ width: '100%', fontFamily: 'sans-serif'}}>
@@ -17,14 +19,14 @@ export default function Navbar(prop) {
 
             <div style={{flex: 1}}></div>
 
-            <h1 style={{margin: 0, color: 'black', fontSize: '32px', fontWeight: 'bold', letterSpacing: '2px', textAlign: 'center', flex: 1, textTransform: 'uppercase'}}>
+            <h1 onClick={() => navigate('/')} style={{margin: 0, color: 'black', fontSize: '32px', fontWeight: 'bold', letterSpacing: '2px', textAlign: 'center', flex: 1, textTransform: 'uppercase', cursor: 'pointer'}}>
             {prop.title}
             </h1>
 
             <div style={{ display: 'flex', gap: '24px', cursor: 'pointer', flex: 1, justifyContent: 'flex-end', alignItem: 'center'}}>
-                <ShoppingBag size={24} strokeWidth={1.5} />
+                <ShoppingBag size={24} strokeWidth={1.5} onClick={() => navigate('/cart')} style={{ cursor: 'pointer' }} />
                 <Heart size={24} strokeWidth={1.5} />
-                <User size={24} strokeWidth={1.5} />
+                <User size={24} strokeWidth={1.5} onClick={() => navigate('/login')} style={{ cursor: 'pointer' }} />
             </div>
         </div>
 

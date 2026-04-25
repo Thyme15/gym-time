@@ -39,6 +39,7 @@ export default function ProductCard({
   rating = 4.8,
   ratingCount = 128,
   badge = "LIMITED EDITION",
+  onClick = null,
 }) {
   const [liked, setLiked] = useState(false);
   const [activeColor, setActiveColor] = useState(0);
@@ -249,14 +250,14 @@ export default function ProductCard({
         }
       `}</style>
 
-      <div className="gt-card">
+      <div className="gt-card" onClick={onClick}>
         {/* Image Section */}
         <div className="gt-img-wrap">
           <div className="gt-logo-badge"><GT_LOGO /></div>
 
           <button
             className={`gt-heart${liked ? " liked" : ""}`}
-            onClick={() => setLiked((v) => !v)}
+            onClick={(e) => { e.stopPropagation(); setLiked((v) => !v); }}
             aria-label="Add to favorites"
           >
             <Heart size={16} strokeWidth={2} />
@@ -286,7 +287,7 @@ export default function ProductCard({
                   border: `1.5px solid ${c.hex === "#f5f5f0" || c.hex === "#fafaf8" ? "#ccc" : c.hex}`,
                 }}
                 title={c.label}
-                onClick={() => setActiveColor(i)}
+                onClick={(e) => { e.stopPropagation(); setActiveColor(i); }}
                 aria-label={c.label}
               />
             ))}
