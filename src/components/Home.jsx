@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
+import AdminBar from './ui/Admin-Bar';
 import ProductCard from './ui/productImage';
 
 export default function Home() {
   const navigate = useNavigate();
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const isAdmin = user?.type === 'admin';
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -35,8 +38,8 @@ export default function Home() {
 
   return (
     <div style={{ fontFamily: 'sans-serif' }}>
-      {/* Navbar */}
-      <Navbar title="HERCULES" />
+      {/* Navbar / AdminBar */}
+      {isAdmin ? <AdminBar title="HERCULES" /> : <Navbar title="HERCULES" />}
 
       {/* Hero Section */}
       <div

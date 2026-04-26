@@ -50,8 +50,14 @@ app.post('/login', (req, res) => {
         return res.status(400).send({ message: "Email and password are required" });
     }
 
-    // 1. Check if user is an Admin (from logInInformation table)
-    const adminQuery = `SELECT login_email as email, role, 'admin' as type FROM logInInformation WHERE login_email = ? AND login_password = ?`;
+    // 1. Check if user is an Admin using admin_ID as password
+    //    Join logInInformation with AdminInfo so we can return name and admin_ID
+    const adminQuery = `
+        SELECT l.login_email as email, l.role, l.admin_ID, 'admin' as type,
+               a.admin_fname as f_name, a.admin_lname as l_name
+        FROM logInInformation l
+        JOIN AdminInfo a ON l.admin_ID = a.admin_ID
+        WHERE l.login_email = ? AND l.admin_ID = ?`;
     
     connection.query(adminQuery, [email, password], (err, adminResult) => {
         if (err) {
@@ -60,7 +66,7 @@ app.post('/login', (req, res) => {
         }
         
         if (adminResult.length > 0) {
-            // Successfully logged in as Admin
+            // Successfully logged in as Admin (password was admin_ID)
             return res.send({ status: "success", user: adminResult[0] });
         } else {
             // 2. Not an Admin? Check if user is a regular Customer (from User table)

@@ -6,9 +6,11 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -16,9 +18,16 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-      console.log(data);
+      
+      if (data.status === 'success') {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/');
+      } else {
+        setError(data.message || 'Login failed. Please check your credentials.');
+      }
     } catch (err) {
       console.error(err);
+      setError('An error occurred. Please try again later.');
     }
   };
 
@@ -108,7 +117,7 @@ export default function Login() {
               backgroundColor: '#e8d9bc',
               borderRadius: '10px',
               padding: '14px 18px',
-              marginBottom: '20px',
+              marginBottom: error ? '10px' : '20px',
             }}>
               <Lock size={20} color="#9a8a6a" strokeWidth={1.5} />
               <input
@@ -127,6 +136,13 @@ export default function Login() {
                 }}
               />
             </div>
+
+            {/* Error Message */}
+            {error && (
+              <p style={{ color: '#d9534f', fontSize: '14px', marginBottom: '20px', marginTop: 0 }}>
+                {error}
+              </p>
+            )}
 
             {/* Sign In button */}
             <button
