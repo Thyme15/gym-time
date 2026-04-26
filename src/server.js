@@ -50,21 +50,92 @@ app.post('/login', (req, res) => {
         return res.status(400).send({ message: "Email and password are required" });
     }
 
-    const query = `SELECT * FROM logInInformation WHERE login_email = ? AND login_password = ?`;
-    connection.query(query, [email, password], (err, result) => {
+    // 1. Check if user is an Admin (from logInInformation table)
+    const adminQuery = `SELECT login_email as email, role, 'admin' as type FROM logInInformation WHERE login_email = ? AND login_password = ?`;
+    
+    connection.query(adminQuery, [email, password], (err, adminResult) => {
         if (err) {
-            console.error(err);
+            console.error(adminQuery, err);
             return res.status(500).send({ message: "Internal Server Error" });
         }
         
-        if (result.length > 0) {
-            res.send({ status: "success", user: result[0] });
+        if (adminResult.length > 0) {
+            // Successfully logged in as Admin
+            return res.send({ status: "success", user: adminResult[0] });
         } else {
-            res.status(401).send({ status: "error", message: "Invalid credentials" });
+            // 2. Not an Admin? Check if user is a regular Customer (from User table)
+            const userQuery = `SELECT user_email as email, 'user' as role, 'customer' as type, f_name, l_name FROM User WHERE user_email = ? AND password = ?`;
+            
+            connection.query(userQuery, [email, password], (err, userResult) => {
+                if (err) {
+                    console.error(userQuery, err);
+                    return res.status(500).send({ message: "Internal Server Error" });
+                }
+
+                if (userResult.length > 0) {
+                    // Successfully logged in as Customer
+                    res.send({ status: "success", user: userResult[0] });
+                } else {
+                    // Not found in either table
+                    res.status(401).send({ status: "error", message: "Invalid email or password" });
+                }
+            });
         }
     });
 });
 
+// Testing Register - Success case
+// method: post
+// URL: http://localhost:3000/register
+// body: raw JSON
+// {
+//   "firstname": "John",
+//   "lastname": "Doe",
+//   "address": "123 Gym St.",
+//   "email": "johndoe@example.com",
+//   "password": "mypassword123"
+// }
+
+// Testing Register - Failure case (Email already exists)
+// method: post
+// URL: http://localhost:3000/register
+// body: raw JSON
+// {
+//   "firstname": "Duplicate",
+//   "lastname": "User",
+//   "address": "456 Test Ave.",
+//   "email": "somchai@gymtime.com", 
+//   "password": "anypassword"
+// }
+app.post('/register', (req, res) => {
+    const { firstname, lastname, address, email, password } = req.body;
+    
+    if (!email || !password) {
+        return res.status(400).send({ message: "Required fields are missing" });
+    }
+
+    // Generate random userID (as it's NOT NULL in DB)
+    const userID = "USR" + Math.floor(Math.random() * 10000);
+
+    // Insert into User table (customers)
+    const query = `INSERT INTO User (userID, f_name, l_name, user_email, password, house_number) VALUES (?, ?, ?, ?, ?, ?)`;
+    
+    connection.query(query, [userID, firstname, lastname, email, password, address], (err, result) => {
+        if (err) {
+            console.error("Register Error:", err);
+            if (err.code === 'ER_DUP_ENTRY') {
+                return res.status(400).send({ message: "Email or User ID already exists" });
+            }
+            return res.status(500).send({ message: "Internal Server Error" });
+        }
+        
+        if (result.affectedRows > 0) {
+            res.send({ status: "success", message: "Registered successfully" });
+        } else {
+            res.status(400).send({ status: "error", message: "Registration failed" });
+        }
+    });
+});
 // Testing Get All Products
 // method: get
 // URL: http://localhost:3000/products
@@ -82,6 +153,7 @@ app.get('/products', (req, res) => {
         res.send(result);
     });
 });
+
 
 
 // Testing Search Products by Name
@@ -142,71 +214,94 @@ app.get('/products/:id', (req, res) => {
     });
 });
 
-// Testing Insert a new Product - Case 1
+// Testing Admin Add Product - Success case
 // method: post
-// URL: http://localhost:3000/products
+// URL: http://localhost:3000/admin/add
 // body: raw JSON
 // {
-//   "product_ID": "PRD011",
-//   "product_name": "Test Product A",
-//   "product_price": 100,
-//   "product_desc": "Desc A",
-//   "admin_ID": "ADM001"
+//   "productID": "PRD999",
+//   "productName": "Advanced Whey Protein",
+//   "price": 1590,
+//   "description": "Premium quality protein for rapid recovery.",
+//   "quantity": 50,
+//   "image": "https://images.example.com/whey.jpg"
 // }
 
-// Testing Insert a new Product - Case 2
+// Testing Admin Add Product - Failure case (Duplicate Product ID)
 // method: post
-// URL: http://localhost:3000/products
+// URL: http://localhost:3000/admin/add
 // body: raw JSON
 // {
-//   "product_ID": "PRD012",
-//   "product_name": "Test Product B",
-//   "product_price": 200,
-//   "product_desc": "Desc B",
-//   "admin_ID": "ADM005"
+//   "productID": "PRD001", 
+//   "productName": "Duplicate Protein",
+//   "price": 1200,
+//   "description": "This will fail because PRD001 already exists.",
+//   "quantity": 10,
+//   "image": "https://images.example.com/fail.jpg"
 // }
-app.post('/products', (req, res) => {
-    const { product_ID, product_name, product_price, product_desc, admin_ID } = req.body;
-    const query = `INSERT INTO Product (product_ID, product_name, product_price, product_desc, admin_ID) 
-                   VALUES (?, ?, ?, ?, ?)`;
-    connection.query(query, [product_ID, product_name, product_price, product_desc, admin_ID], (err, result) => {
+app.post('/admin/add', (req, res) => {
+    // รับค่าจากหน้าบ้าน (ตัวแปรต้องตรงกับหน้า AdminAdd.jsx ของคุณ)
+    const { productID, productName, price, description, quantity, image } = req.body;
+    const adminID = 'ADM001'; // กำหนด Admin เบื้องต้นสั้นๆ
+    // 1. บันทึกลงตาราง Product
+    const productQuery = `INSERT INTO Product (product_ID, product_name, product_price, product_desc, admin_ID) 
+                         VALUES (?, ?, ?, ?, ?)`;
+    
+    connection.query(productQuery, [productID, productName, price, description, adminID], (err, result) => {
         if (err) {
-            console.error(err);
-            return res.status(500).send({ message: "Internal Server Error" });
+            console.error("Product Error:", err);
+            return res.status(500).send({ message: "Error adding product basics" });
         }
-        res.send({ status: "success", message: "Product added successfully", details: result });
+        // 2. ถ้าบันทึกสินค้าสำเร็จ ให้บันทึกจำนวนสต็อกลงตาราง Stock
+        const stockID = "STK_" + productID;
+        const stockQuery = `INSERT INTO Stock (stock_ID, quantity, product_ID) VALUES (?, ?, ?)`;
+        
+        connection.query(stockQuery, [stockID, quantity, productID], (err) => {
+            if (err) {
+                console.error("Stock Error:", err);
+                // เราไม่หยุดการทำงานที่นี่เผื่อจะไปต่อเรื่องรูปได้
+            }
+            // 3. บันทึกรูปภาพลงตาราง Image
+            const imageID = "IMG_" + productID;
+            const imageQuery = `INSERT INTO Image (image_ID, description, url, product_ID) VALUES (?, ?, ?, ?)`;
+            
+            connection.query(imageQuery, [imageID, productName, image, productID], (err) => {
+                if (err) {
+                    console.error("Image Error:", err);
+                    return res.status(500).send({ message: "Error adding product image" });
+                }
+                
+                // ถ้าสำเร็จทั้งหมด
+                res.send({ status: "success", message: "Complete! Product, Stock, and Image recorded." });
+            });
+        });
     });
 });
 
-// Testing Update Product Information - Case 1
-// method: put
-// URL: http://localhost:3000/products/PRD011
-// body: raw JSON
-// {
-//   "product_name": "Updated Product A",
-//   "product_price": 150,
-//   "product_desc": "Updated Desc A"
-// }
 
-// Testing Update Product Information - Case 2
-// method: put
-// URL: http://localhost:3000/products/PRD012
-// body: raw JSON
-// {
-//   "product_name": "Updated Product B",
-//   "product_price": 250,
-//   "product_desc": "Updated Desc B"
-// }
-app.put('/products/:id', (req, res) => {
+app.put('/admin/mod/:id', (req, res) => {
     const { id } = req.params;
-    const { product_name, product_price, product_desc } = req.body;
+    const { product_name, product_price, product_desc, quantity, image_url } = req.body;
+    // 1. อัปเดตตาราง Product
     const query = `UPDATE Product SET product_name = ?, product_price = ?, product_desc = ? WHERE product_ID = ?`;
     connection.query(query, [product_name, product_price, product_desc, id], (err, result) => {
         if (err) {
             console.error(err);
-            return res.status(500).send({ message: "Internal Server Error" });
+            return res.status(500).send({ message: "Error updating product" });
         }
-        res.send({ status: "success", message: "Product updated successfully" });
+        // 2. อัปเดตจำนวนในตาราง Stock (ถ้ามีรหัสสินค้าในสต็อก)
+        const stockQuery = `UPDATE Stock SET quantity = ? WHERE product_ID = ?`;
+        connection.query(stockQuery, [quantity, id], (err) => {
+            if (err) console.error("Stock update error:", err);
+            
+            // 3. อัปเดตรูปภาพในตาราง Image
+            const imgQuery = `UPDATE Image SET url = ? WHERE product_ID = ?`;
+            connection.query(imgQuery, [image_url, id], (err) => {
+                if (err) console.error("Image update error:", err);
+                
+                res.send({ status: "success", message: "Product updated completely!" });
+            });
+        });
     });
 });
 

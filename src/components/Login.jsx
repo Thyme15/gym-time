@@ -154,7 +154,7 @@ export default function Login() {
             forgot password?
           </p>
           <p style={{ margin: 0, fontSize: '14px', color: '#555', cursor: 'pointer' }}>
-            Have account?
+            Don't have an account? <span style={{ color: '#c9a22a', fontWeight: 'bold' }} onClick={() => navigate('/register')}>Register</span>
           </p>
 
         </div>

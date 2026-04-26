@@ -9,6 +9,9 @@ import Wishlist from './components/Wishlist'
 import Men from './components/Men'
 import Women from './components/Women'
 import Search from './components/Search'
+import Register from './components/Register'
+import AdminAdd from './components/AdminAdd'
+import AdminMod from './components/AdminMod'
 
 function App() {
   return (
@@ -23,6 +26,9 @@ function App() {
         <Route path="/men" element={<Men />} />
         <Route path="/women" element={<Women />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/admin/add" element={<AdminAdd />} />
+        <Route path="/admin/mod/:id" element={<AdminMod />} />
         {/* Add more routes here */}
       </Routes>
     </Router>

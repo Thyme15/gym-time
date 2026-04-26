@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 import ProductCard from './ui/productImage';
+import MainMenPoster from '../assets/MainMenPoster.png';
 
 export default function Men() {
   const navigate = useNavigate();
@@ -38,16 +39,14 @@ export default function Men() {
       <Navbar title="HERCULES" />
 
       {/* Hero Section - Men */}
-      <div style={{ display: 'flex', width: '100%', height: '500px' }}>
-        {[1, 2, 3, 4, 5].map(i => (
-          <img 
-            key={i}
-            src={`https://placehold.co/400x600/222/c9a22a?text=Men+${i}`} 
-            style={{ flex: 1, objectFit: 'cover', width: '20%' }} 
-            alt={`Men ${i}`} 
-          />
-        ))}
+      <div style={{ width: '100%', height: 'auto' }}>
+        <img 
+          src={MainMenPoster} 
+          style={{ width: '100%', height: 'auto', display: 'block' }} 
+          alt="Poster" 
+        />
       </div>
+
 
       {/* NEW ARRIVED Section */}
       <div style={{ backgroundColor: '#f5f5f5', padding: '60px 40px' }}>
