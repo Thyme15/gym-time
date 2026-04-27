@@ -55,7 +55,7 @@ export default function Register() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontFamily: 'serif', // ใช้ Serif ตามรูป
+      fontFamily: 'sans-serif', 
     }}>
       <div style={{ position: 'relative', paddingTop: '28px' }}>
         

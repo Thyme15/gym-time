@@ -27,23 +27,13 @@ connection.connect(function(err) {
     console.log(`Connected DB: ${process.env.MYSQL_DATABASE}`);
 });
 
-// Testing Login - Success case
-// method: post
+// Testing Login
+// method: POST
 // URL: http://localhost:3000/login
-// body: raw JSON
-// {
-//   "email": "somchai@gymtime.com",
-//   "password": "ADM01"
-// }
-
-// Testing Login - Failure case (Wrong password)
-// method: post
-// URL: http://localhost:3000/login
-// body: raw JSON
-// {
-//   "email": "somchai@gymtime.com",
-//   "password": "wrongpassword"
-// }
+// Success Response:
+// { "status": "success", "user": { "email": "admin@gymtime.com", "role": "admin", ... } }
+// Failure Response (Wrong password):
+// { "status": "error", "message": "Invalid email or password" }
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
     
@@ -51,8 +41,6 @@ app.post('/login', (req, res) => {
         return res.status(400).send({ message: "Email and password are required" });
     }
 
-    // 1. Check if user is an Admin using admin_ID as password
-    //    Join logInInformation with AdminInfo so we can return name and admin_ID
     const adminQuery = `
         SELECT l.login_email as email, l.role, l.admin_ID, 'admin' as type,
                a.admin_fname as f_name, a.admin_lname as l_name
@@ -67,10 +55,8 @@ app.post('/login', (req, res) => {
         }
         
         if (adminResult.length > 0) {
-            // Successfully logged in as Admin (password was admin_ID)
             return res.send({ status: "success", user: adminResult[0] });
         } else {
-            // 2. Not an Admin? Check if user is a regular Customer (from User table)
             const userQuery = `SELECT user_email as email, 'user' as role, 'customer' as type, f_name, l_name FROM User WHERE user_email = ? AND password = ?`;
             
             connection.query(userQuery, [email, password], (err, userResult) => {
@@ -80,10 +66,8 @@ app.post('/login', (req, res) => {
                 }
 
                 if (userResult.length > 0) {
-                    // Successfully logged in as Customer
                     res.send({ status: "success", user: userResult[0] });
                 } else {
-                    // Not found in either table
                     res.status(401).send({ status: "error", message: "Invalid email or password" });
                 }
             });
@@ -91,29 +75,11 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Testing Register - Success case
-// method: post
+// Testing Register
+// method: POST
 // URL: http://localhost:3000/register
-// body: raw JSON
-// {
-//   "firstname": "John",
-//   "lastname": "Doe",
-//   "address": "123 Gym St.",
-//   "email": "johndoe@example.com",
-//   "password": "mypassword123"
-// }
-
-// Testing Register - Failure case (Email already exists)
-// method: post
-// URL: http://localhost:3000/register
-// body: raw JSON
-// {
-//   "firstname": "Duplicate",
-//   "lastname": "User",
-//   "address": "456 Test Ave.",
-//   "email": "somchai@gymtime.com", 
-//   "password": "anypassword"
-// }
+// Success Response: { "status": "success", "message": "Registered successfully" }
+// Failure Response: { "message": "Email or User ID already exists" }
 app.post('/register', (req, res) => {
     const { firstname, lastname, address, email, password } = req.body;
     
@@ -121,10 +87,7 @@ app.post('/register', (req, res) => {
         return res.status(400).send({ message: "Required fields are missing" });
     }
 
-    // Generate random userID (as it's NOT NULL in DB)
     const userID = "USR" + Math.floor(Math.random() * 10000);
-
-    // Insert into User table (customers)
     const query = `INSERT INTO User (userID, f_name, l_name, user_email, password, house_number) VALUES (?, ?, ?, ?, ?, ?)`;
     
     connection.query(query, [userID, firstname, lastname, email, password, address], (err, result) => {
@@ -145,10 +108,11 @@ app.post('/register', (req, res) => {
 });
 
 // Testing Get All Products
-// method: get
+// method: GET
 // URL: http://localhost:3000/products
+// Success Response: [{ "product_ID": "PRD001", "product_name": "Raven Compression", ... }]
+// Failure Response: { "message": "Internal Server Error" }
 app.get('/products', (req, res) => {
-    // JOIN กับ Image เพื่อดึง URL รูปภาพมาโชว์ที่หน้าแรกด้วย
     const query = `
         SELECT p.*, i.url AS product_image 
         FROM Product p
@@ -163,15 +127,10 @@ app.get('/products', (req, res) => {
     });
 });
 
-
-
-// Testing Search Products by Name
-// method: get
-// URL: http://localhost:3000/products/search?name=Whey
-
-// Testing Search Products by Price Range
-// method: get
-// URL: http://localhost:3000/products/search?minPrice=500&maxPrice=1500
+// Testing Search Products
+// method: GET
+// URL: http://localhost:3000/products/search?name=Raven
+// Success Response: [{ "product_ID": "PRD001", ... }]
 app.get('/products/search', (req, res) => {
     const { name, minPrice, maxPrice, desc } = req.query;
 
@@ -204,12 +163,11 @@ app.get('/products/search', (req, res) => {
     });
 });
 
-// Testing Get Product by ID - Success
-// method: get
+// Testing Get Product by ID
+// method: GET
 // URL: http://localhost:3000/products/PRD001
 app.get('/products/:id', (req, res) => {
     const { id } = req.params;
-    // JOIN เพื่อดึงทั้งข้อมูลสินค้า, รูปภาพ (url), และจำนวนสต็อก (quantity)
     const query = `
         SELECT p.*, i.url AS product_image, s.quantity
         FROM Product p
@@ -226,36 +184,13 @@ app.get('/products/:id', (req, res) => {
     });
 });
 
-// Testing Admin Add Product - Success case
-// method: post
+// Testing Admin Add Product
+// method: POST
 // URL: http://localhost:3000/admin/add
-// body: raw JSON
-// {
-//   "productID": "PRD999",
-//   "productName": "Advanced Whey Protein",
-//   "price": 1590,
-//   "description": "Premium quality protein for rapid recovery.",
-//   "quantity": 50,
-//   "image": "https://images.example.com/whey.jpg"
-// }
-
-// Testing Admin Add Product - Failure case (Duplicate Product ID)
-// method: post
-// URL: http://localhost:3000/admin/add
-// body: raw JSON
-// {
-//   "productID": "PRD001", 
-//   "productName": "Duplicate Protein",
-//   "price": 1200,
-//   "description": "This will fail because PRD001 already exists.",
-//   "quantity": 10,
-//   "image": "https://images.example.com/fail.jpg"
-// }
+// Success Response: { "status": "success", "message": "Complete! ..." }
 app.post('/admin/add', (req, res) => {
-    // รับค่าจากหน้าบ้าน (ตัวแปรต้องตรงกับหน้า AdminAdd.jsx ของคุณ)
     const { productID, productName, price, description, quantity, image } = req.body;
-    const adminID = 'ADM001'; // กำหนด Admin เบื้องต้นสั้นๆ
-    // 1. บันทึกลงตาราง Product
+    const adminID = 'ADM001'; 
     const productQuery = `INSERT INTO Product (product_ID, product_name, product_price, product_desc, admin_ID) 
                          VALUES (?, ?, ?, ?, ?)`;
     
@@ -264,8 +199,6 @@ app.post('/admin/add', (req, res) => {
             console.error("Product Error:", err);
             return res.status(500).send({ message: "Error adding product basics" });
         }
-        // 2. ถ้าบันทึกสินค้าสำเร็จ ให้บันทึกจำนวนสต็อกลงตาราง Stock
-        // ปรับ ID ให้สั้นลงเพื่อไม่ให้เกิน 10 ตัวอักษร (S + productID)
         const stockID = ("S" + productID).substring(0, 10);
         const stockQuery = `INSERT INTO Stock (stock_ID, quantity, product_ID) VALUES (?, ?, ?)`;
         
@@ -273,8 +206,6 @@ app.post('/admin/add', (req, res) => {
             if (err) {
                 console.error("Stock Error:", err);
             }
-            // 3. บันทึกรูปภาพลงตาราง Image
-            // ปรับ ID ให้สั้นลงเพื่อไม่ให้เกิน 10 ตัวอักษร (I + productID)
             const imageID = ("I" + productID).substring(0, 10);
             const imageQuery = `INSERT INTO Image (image_ID, description, url, product_ID) VALUES (?, ?, ?, ?)`;
             
@@ -283,69 +214,47 @@ app.post('/admin/add', (req, res) => {
                     console.error("Image Error:", err);
                     return res.status(500).send({ message: "Error adding product image" });
                 }
-                
-                // ถ้าสำเร็จทั้งหมด
                 res.send({ status: "success", message: "Complete! Product, Stock, and Image recorded." });
             });
         });
     });
 });
 
-
-// Testing Admin Update Product - Success case
-// method: put
+// Testing Admin Update Product
+// method: PUT
 // URL: http://localhost:3000/admin/mod/PRD001
-// body: raw JSON
-// {
-//   "product_name": "Updated Name",
-//   "product_price": 2500,
-//   "product_desc": "Updated description",
-//   "quantity": 10,
-//   "image_url": "https://example.com/new-img.jpg"
-// }
 app.put('/admin/mod/:id', (req, res) => {
     const { id } = req.params;
     const { product_name, product_price, product_desc, quantity, image_url } = req.body;
-    // 1. อัปเดตตาราง Product
     const query = `UPDATE Product SET product_name = ?, product_price = ?, product_desc = ? WHERE product_ID = ?`;
     connection.query(query, [product_name, product_price, product_desc, id], (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).send({ message: "Error updating product" });
         }
-        // 2. อัปเดตจำนวนในตาราง Stock (ถ้ามีรหัสสินค้าในสต็อก)
         const stockQuery = `UPDATE Stock SET quantity = ? WHERE product_ID = ?`;
         connection.query(stockQuery, [quantity, id], (err) => {
             if (err) console.error("Stock update error:", err);
-            
-            // 3. อัปเดตรูปภาพในตาราง Image
             const imgQuery = `UPDATE Image SET url = ? WHERE product_ID = ?`;
             connection.query(imgQuery, [image_url, id], (err) => {
                 if (err) console.error("Image update error:", err);
-                
                 res.send({ status: "success", message: "Product updated completely!" });
             });
         });
     });
 });
 
-// Testing Delete Product (and its related Stock/Image) - Success case
-// method: delete
+// Testing Delete Product
+// method: DELETE
 // URL: http://localhost:3000/products/PRD001
 app.delete('/products/:id', (req, res) => {
     const { id } = req.params;
-
-    // 1. ลบจากตาราง Image ก่อน
     const deleteImage = `DELETE FROM Image WHERE product_ID = ?`;
     connection.query(deleteImage, [id], (err) => {
         if (err) console.error(err);
-
-        // 2. ลบจากตาราง Stock
         const deleteStock = `DELETE FROM Stock WHERE product_ID = ?`;
         connection.query(deleteStock, [id], (err) => {
             if (err) console.error(err);
-
-            // 3. สุดท้ายค่อยลบตัวสินค้าจากตาราง Product
             const deleteProduct = `DELETE FROM Product WHERE product_ID = ?`;
             connection.query(deleteProduct, [id], (err, result) => {
                 if (err) {
@@ -357,7 +266,6 @@ app.delete('/products/:id', (req, res) => {
         });
     });
 });
-
 
 // Catch-all handler: send back index.html for client-side routing
 app.use((req, res) => {
