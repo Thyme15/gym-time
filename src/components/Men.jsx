@@ -12,11 +12,11 @@ export default function Men() {
 
   // --- NEW STEP 1 CODE STARTS HERE ---
   const heroImages = [
-    '/images/m1.png',
-    '/images/m2.png',
-    '/images/m3.png',
-    '/images/m4.png',
-    '/images/m5.png'
+    'http://localhost:5173/images/m1.png',
+    'http://localhost:5173/images/m2.png',
+    'http://localhost:5173/images/m3.png',
+    'http://localhost:5173/images/m4.png',
+    'http://localhost:5173/images/m5.png'
   ];
 
   const displayImages = [...heroImages, ...heroImages]; 

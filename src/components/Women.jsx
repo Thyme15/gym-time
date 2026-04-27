@@ -12,11 +12,11 @@ export default function Women() {
   // --- INFINITE RANDOMIZED SLIDER LOGIC ---
   // Make sure you save these images in your public/images/ folder!
   const heroImages = [
-    '/images/wm1.png',
-    '/images/wm2.png',
-    '/images/wm3.png',
-    '/images/wm4.png',
-    '/images/wm5.png'
+    'http://localhost:5173/images/wm1.png',
+    'http://localhost:5173/images/wm2.png',
+    'http://localhost:5173/images/wm3.png',
+    'http://localhost:5173/images/wm4.png',
+    'http://localhost:5173/images/wm5.png'
   ];
 
   // Randomize the array once on load, then duplicate it for the endless loop

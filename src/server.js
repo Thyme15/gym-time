@@ -5,6 +5,7 @@ import mysql from 'mysql2';
 import path from 'path';
 
 const app = express();
+app.use('/images', express.static('public/images'));
 
 app.use(cors()); 
 app.use(express.json()); 
