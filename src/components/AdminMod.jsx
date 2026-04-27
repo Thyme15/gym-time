@@ -46,7 +46,7 @@ export default function AdminMod() {
             const data = await response.json();
             if (data.status === 'success') {
                 alert("Updated successfully!");
-                navigate('/admin');
+                navigate('/admin/mod/PRD-000');
             }
         } catch (err) {
             console.error(err);
@@ -60,7 +60,7 @@ export default function AdminMod() {
                 const data = await response.json();
                 if (data.status === 'success') {
                     alert("Deleted successfully!");
-                    navigate('/admin');
+                    navigate('/admin/mod/PRD-000');
                 }
             } catch (err) {
                 console.error(err);

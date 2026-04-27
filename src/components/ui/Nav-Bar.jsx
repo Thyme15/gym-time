@@ -51,7 +51,7 @@ export default function Navbar(prop) {
         <span style={{cursor: 'pointer'}} onClick={() => navigate('/men')}>Men</span>
         <span style={{cursor: 'pointer'}}>Shoes</span>
         <span style={{cursor: 'pointer'}}>Accessories</span>
-        <span style={{cursor: 'pointer'}}>About Us</span>
+        <span style={{cursor: 'pointer'}} onClick={() => navigate('/aboutus')}>About Us</span>
       </div>
     </header>
   )
