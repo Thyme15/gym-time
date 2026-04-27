@@ -9,46 +9,6 @@ export default function Men() {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [products, setProducts] = useState([]);
 
-
-  // --- NEW STEP 1 CODE STARTS HERE ---
-  const heroImages = [
-    'http://localhost:5173/images/m1.png',
-    'http://localhost:5173/images/m2.png',
-    'http://localhost:5173/images/m3.png',
-    'http://localhost:5173/images/m4.png',
-    'http://localhost:5173/images/m5.png'
-  ];
-
-  const displayImages = [...heroImages, ...heroImages]; 
-
-  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(true);
-
-  // 1. The main timer that slides the images every 4 seconds
-  useEffect(() => {
-    const slideTimer = setInterval(() => {
-      setIsTransitioning(true); // Make sure the sliding animation is ON
-      setCurrentHeroIndex((prevIndex) => prevIndex + 1);
-    }, 4000);
-
-    return () => clearInterval(slideTimer);
-  }, []);
-
-  // 2. The "Seamless Snap" effect
-  useEffect(() => {
-    // If we have slid all the way through the first set of 5 images...
-    if (currentHeroIndex === heroImages.length) {
-      // Wait exactly 1 second (the time it takes for the CSS slide animation to finish)
-      const resetTimer = setTimeout(() => {
-        setIsTransitioning(false); // Turn OFF the animation temporarily
-        setCurrentHeroIndex(0); // Silently snap back to the very first image
-      }, 1000);
-
-      return () => clearTimeout(resetTimer);
-    }
-  }, [currentHeroIndex, heroImages.length]);
-  // --- NEW STEP 1 CODE ENDS HERE ---
-
   useEffect(() => {
     fetch('/api/products')
       .then((r) => r.json())
@@ -56,9 +16,7 @@ export default function Men() {
       .catch((err) => console.error('Error fetching products:', err));
   }, []);
 
-  // First 3 products → new arrivals carousel
   const newArrivedProducts = products.slice(0, 3);
-  // Rest → seasonal section (or all if fewer than 4)
   const seasonalProducts = products.length > 3 ? products.slice(3) : products;
 
   const handlePrevCarousel = () => {
@@ -77,30 +35,13 @@ export default function Men() {
     <div style={{ fontFamily: 'sans-serif' }}>
       <Navbar title="HERCULES" />
 
-      {/* Hero Section - 5 Block Infinite Conveyor Belt */}
-      <div style={{ width: '100%', height: '500px', overflow: 'hidden' }}>
-        <div style={{
-          display: 'flex',
-          height: '100%',
-          width: '100%',
-          transform: `translateX(-${currentHeroIndex * 20}%)`,
-          // Turn off the transition during the hidden snap back to 0
-          transition: isTransitioning ? 'transform 1s ease-in-out' : 'none'
-        }}>
-          {displayImages.map((imgSrc, index) => (
-            <img 
-              key={index}
-              src={imgSrc} 
-              alt={`Hercules Men Collection ${index}`} 
-              style={{ 
-                // flex: '0 0 20%' forces every single image to be exactly 1/5th of the screen width
-                flex: '0 0 20%', 
-                height: '100%',
-                objectFit: 'cover'
-              }} 
-            />
-          ))}
-        </div>
+      {/* Hero Section - Single Poster */}
+      <div style={{ width: '100%', height: '420px', overflow: 'hidden' }}>
+        <img 
+          src="/images/MainMenPoster.png" 
+          style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center' }} 
+          alt="Men Collection Poster" 
+        />
       </div>
 
       {/* NEW ARRIVED Section */}
@@ -255,4 +196,4 @@ export default function Men() {
       </div>
     </div>
   );
-  }
+}

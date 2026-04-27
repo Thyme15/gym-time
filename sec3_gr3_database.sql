@@ -68,7 +68,7 @@ CREATE TABLE `Image` (
 
 LOCK TABLES `Image` WRITE;
 /*!40000 ALTER TABLE `Image` DISABLE KEYS */;
-INSERT INTO `Image` VALUES ('IMG001','Whey Protein front view','https://cdn.gymtime.com/products/prd001_front.jpg','PRD001'),('IMG002','Resistance Band Set full','https://cdn.gymtime.com/products/prd002_full.jpg','PRD002'),('IMG003','Gym Gloves pair','https://cdn.gymtime.com/products/prd003_pair.jpg','PRD003'),('IMG004','Yoga Mat rolled','https://cdn.gymtime.com/products/prd004_roll.jpg','PRD004'),('IMG005','Dumbbell pair 5kg','https://cdn.gymtime.com/products/prd005_pair.jpg','PRD005'),('IMG006','Pre-Workout tub front','https://cdn.gymtime.com/products/prd006_front.jpg','PRD006'),('IMG007','Gym Bag side view','https://cdn.gymtime.com/products/prd007_side.jpg','PRD007'),('IMG008','Skipping Rope laid flat','https://cdn.gymtime.com/products/prd008_flat.jpg','PRD008'),('IMG009','Foam Roller standing','https://cdn.gymtime.com/products/prd009_stand.jpg','PRD009'),('IMG010','Protein Bar box open','https://cdn.gymtime.com/products/prd010_open.jpg','PRD010');
+INSERT INTO `Image` VALUES ('IMG001','Raven Compression','/images/MenRavenCompression.png','PRD001'),('IMG002','Raven Hoodie','/images/MenRavenHoodie.png','PRD002'),('IMG003','Raven Pant Men','/images/MenRavenPant.png','PRD003'),('IMG004','Raven Bra','/images/WomenRavenBra.png','PRD004'),('IMG005','Raven Pant Women','/images/WomenRavenPant.png','PRD005'),('IMG006','Raven Sport Women','/images/WomenRavenSport.png','PRD006'),('IMG007','Shoes Copper','/images/ShoesCopper.png','PRD007'),('IMG008','Shoes Gold','/images/ShoesGold.png','PRD008'),('IMG009','Shoes Silver','/images/ShoesSilver.png','PRD009'),('IMG010','Raven Sport Set','/images/RavenWomenSport.png','PRD010'),('IMG011','Hercules Gym Bag','/images/HerculesBag.png','PRD011'),('IMG012','Hercules Tee Black','/images/HerculesBlack.png','PRD012'),('IMG013','Hercules Flask','/images/HerculesFlask.png','PRD013'),('IMG014','Hercules Tee White','/images/HerculesWhite.png','PRD014'),('IMG015','Raven Dress Sport','/images/WomenPreviewDress.png','PRD015'),('IMG016','Hercules Tee Black-White','/images/HerculesBlackWhite.png','PRD016'),('IMG017','Raven Gym Bag','/images/RavenBag.png','PRD017'),('IMG018','Raven Stealth Flask','/images/RavenFlask.png','PRD018'),('IMG019','Raven Training Gloves','/images/RavenGlove.png','PRD019');
 /*!40000 ALTER TABLE `Image` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -156,7 +156,7 @@ CREATE TABLE `Product` (
 
 LOCK TABLES `Product` WRITE;
 /*!40000 ALTER TABLE `Product` DISABLE KEYS */;
-INSERT INTO `Product` VALUES ('PRD001','Whey Protein Chocolate',1290.00,'High-quality whey protein, chocolate flavor 1kg','ADM001'),('PRD002','Resistance Band Set',450.00,'Set of 5 resistance bands for home workout','ADM001'),('PRD003','Gym Gloves',299.00,'Anti-slip gym gloves, breathable material','ADM002'),('PRD004','Yoga Mat',590.00,'Non-slip yoga mat 6mm thickness','ADM002'),('PRD005','Dumbbell 5kg Pair',1100.00,'Cast iron dumbbell pair, 5kg each','ADM003'),('PRD006','Pre-Workout Supplement',890.00,'Energy boost pre-workout formula, 30 servings','ADM003'),('PRD007','Gym Bag',750.00,'Large capacity gym bag with shoe compartment','ADM004'),('PRD008','Skipping Rope',199.00,'Adjustable speed skipping rope with ball bearings','ADM004'),('PRD009','Foam Roller',390.00,'High-density foam roller for muscle recovery','ADM005'),('PRD010','Protein Bar Box',650.00,'Box of 12 protein bars, mixed flavors','ADM005');
+INSERT INTO `Product` VALUES ('PRD001','Raven Compression',1290.00,'4-way stretch compression shirt with moisture-wicking fabric for peak training performance.','ADM001'),('PRD002','Raven Hoodie',1890.00,'Heavyweight fleece hoodie with reinforced stitching built for daily training wear.','ADM001'),('PRD003','Raven Pant Men',1490.00,'Tapered training pants with full range of motion for gym and outdoor workouts.','ADM001'),('PRD004','Raven Bra',990.00,'High-support sports bra with wide straps and seamless panels for all-day comfort.','ADM001'),('PRD005','Raven Pant Women',1390.00,'High-rise compressive pants with four-way stretch for yoga and heavy lifts.','ADM001'),('PRD006','Raven Sport Women',1190.00,'Open-back sport top with built-in support. Lightweight and breathable for any workout.','ADM001'),('PRD007','Shoes Copper',3290.00,'Performance training shoes with energy-return midsole and anti-slip rubber outsole.','ADM001'),('PRD008','Shoes Gold',3590.00,'Limited Gold edition shoes with responsive cushioning and breathable mesh upper.','ADM001'),('PRD009','Shoes Silver',3190.00,'Versatile Silver edition trainer with dual-density outsole for all disciplines.','ADM001'),('PRD010','Raven Sport Set',2190.00,'Matched Bra and Sport Top set with consistent compression and bold gym style.','ADM001'),('PRD011','Hercules Gym Bag',2490.00,'Spacious gym bag with shoe compartment, wet pocket, and padded shoulder straps.','ADM001'),('PRD012','Hercules Tee Black',890.00,'Premium cotton-blend black tee with relaxed fit and subtle Hercules branding.','ADM001'),('PRD013','Hercules Flask',690.00,'Vacuum-insulated flask. Cold for 24hrs, hot for 12hrs. Leak-proof and grip-ready.','ADM001'),('PRD014','Hercules Tee White',890.00,'Breathable white performance tee for gym, field, or everyday training sessions.','ADM001'),('PRD015','Raven Dress Sport',1790.00,'Sport dress with compression liner and flared skirt for full freedom of movement.','ADM001'),('PRD016','Hercules Tee Black-White',950.00,'Premium fusion of Black and White performance fabrics for elite gym style.','ADM001'),('PRD017','Raven Gym Bag',2190.00,'Durable water-resistant gym bag with specialized compartments for shoes and wet gear.','ADM001'),('PRD018','Raven Stealth Flask',790.00,'Matte finish vacuum-insulated flask. Keeps drinks cold for 24 hours with a leak-proof seal.','ADM001'),('PRD019','Raven Training Gloves',850.00,'High-grip training gloves with wrist support and breathable mesh for maximum control.','ADM001');
 /*!40000 ALTER TABLE `Product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -208,7 +208,6 @@ CREATE TABLE `SizeStock` (
 
 LOCK TABLES `SizeStock` WRITE;
 /*!40000 ALTER TABLE `SizeStock` DISABLE KEYS */;
-INSERT INTO `SizeStock` VALUES ('STK001','One Size'),('STK002','One Size'),('STK003','S'),('STK004','One Size'),('STK005','One Size'),('STK006','One Size'),('STK007','L'),('STK008','One Size'),('STK009','One Size'),('STK010','One Size');
 /*!40000 ALTER TABLE `SizeStock` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -236,7 +235,7 @@ CREATE TABLE `Stock` (
 
 LOCK TABLES `Stock` WRITE;
 /*!40000 ALTER TABLE `Stock` DISABLE KEYS */;
-INSERT INTO `Stock` VALUES ('STK001',50,NULL,'PRD001'),('STK002',120,NULL,'PRD002'),('STK003',80,'S','PRD003'),('STK004',60,NULL,'PRD004'),('STK005',30,NULL,'PRD005'),('STK006',45,NULL,'PRD006'),('STK007',70,'L','PRD007'),('STK008',200,NULL,'PRD008'),('STK009',55,NULL,'PRD009'),('STK010',90,NULL,'PRD010');
+INSERT INTO `Stock` VALUES ('STK001',50,NULL,'PRD001'),('STK002',40,NULL,'PRD002'),('STK003',45,NULL,'PRD003'),('STK004',60,NULL,'PRD004'),('STK005',55,NULL,'PRD005'),('STK006',50,NULL,'PRD006'),('STK007',30,NULL,'PRD007'),('STK008',25,NULL,'PRD008'),('STK009',35,NULL,'PRD009'),('STK010',20,NULL,'PRD010'),('STK011',40,NULL,'PRD011'),('STK012',80,NULL,'PRD012'),('STK013',60,NULL,'PRD013'),('STK014',80,NULL,'PRD014'),('STK015',35,NULL,'PRD015'),('STK016',50,NULL,'PRD016'),('STK017',40,NULL,'PRD017'),('STK018',65,NULL,'PRD018'),('STK019',55,NULL,'PRD019');
 /*!40000 ALTER TABLE `Stock` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -281,4 +280,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-20 13:27:40
+-- Dump completed on 2026-04-27 23:40:23

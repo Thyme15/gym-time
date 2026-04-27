@@ -13,6 +13,7 @@ import Register from './components/Register'
 import AdminAdd from './components/AdminAdd'
 import AdminMod from './components/AdminMod'
 import About from './components/AboutUs' 
+import Accessories from './components/Accessories'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/admin/add" element={<AdminAdd />} />
         <Route path="/admin/mod/:id" element={<AdminMod />} />
         <Route path="/about" element={<About />} />
+        <Route path="/accessories" element={<Accessories />} />
         {/* Add more routes here */}
       </Routes>
     </Router>

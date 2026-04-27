@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 import ProductCard from './ui/productImage';
 
-export default function Women() {
+export default function Accessories() {
   const navigate = useNavigate();
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [products, setProducts] = useState([]);
@@ -17,9 +17,8 @@ export default function Women() {
   }, []);
 
   const newArrivedProducts = products.filter(p => 
-    ['PRD004', 'PRD005', 'PRD006'].includes(p.product_ID)
+    ['PRD017', 'PRD018', 'PRD019'].includes(p.product_ID)
   );
-  
   const seasonalProducts = products.length > 3 ? products.slice(3) : products;
 
   const handlePrevCarousel = () => {
@@ -39,11 +38,11 @@ export default function Women() {
       <Navbar title="HERCULES" />
 
       {/* Hero Section - Single Poster */}
-      <div style={{ width: '100%', height: '420px', overflow: 'hidden' }}>
+      <div style={{ width: '100%', height: '420px' }}>
         <img 
-          src="/images/MainWomenPoster.png" 
-          style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center' }} 
-          alt="Women Collection Poster" 
+          src="/images/AccessoriesPoster.png" 
+          style={{ width: '100%', height: '100%', display: 'block',objectFit: 'cover', objectPosition: 'center' }} 
+          alt="Accessories Collection Poster" 
         />
       </div>
 
@@ -103,7 +102,7 @@ export default function Women() {
                   alt={product.product_name}
                   style={{ width: '100%', height: '220px', objectFit: 'contain' }}
                 />
-                <p style={{ textAlign: 'center', marginTop: '10px', fontWeight: '600', fontSize: '14px', color: '#1a1a1a' }}>
+                <p style={{ textAlign: 'center', marginTop: '10px', fontWeight: '600', fontSize: '14px', color: 'white' }}>
                   {product.product_name}
                 </p>
               </div>
