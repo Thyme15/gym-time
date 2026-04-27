@@ -3,12 +3,51 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 import ProductCard from './ui/productImage';
-import MainMenPoster from '../assets/MainMenPoster.png';
 
 export default function Men() {
   const navigate = useNavigate();
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [products, setProducts] = useState([]);
+
+
+  // --- NEW STEP 1 CODE STARTS HERE ---
+  const heroImages = [
+    '/images/m1.png',
+    '/images/m2.png',
+    '/images/m3.png',
+    '/images/m4.png',
+    '/images/m5.png'
+  ];
+
+  const displayImages = [...heroImages, ...heroImages]; 
+
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+
+  // 1. The main timer that slides the images every 4 seconds
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setIsTransitioning(true); // Make sure the sliding animation is ON
+      setCurrentHeroIndex((prevIndex) => prevIndex + 1);
+    }, 4000);
+
+    return () => clearInterval(slideTimer);
+  }, []);
+
+  // 2. The "Seamless Snap" effect
+  useEffect(() => {
+    // If we have slid all the way through the first set of 5 images...
+    if (currentHeroIndex === heroImages.length) {
+      // Wait exactly 1 second (the time it takes for the CSS slide animation to finish)
+      const resetTimer = setTimeout(() => {
+        setIsTransitioning(false); // Turn OFF the animation temporarily
+        setCurrentHeroIndex(0); // Silently snap back to the very first image
+      }, 1000);
+
+      return () => clearTimeout(resetTimer);
+    }
+  }, [currentHeroIndex, heroImages.length]);
+  // --- NEW STEP 1 CODE ENDS HERE ---
 
   useEffect(() => {
     fetch('/api/products')
@@ -38,15 +77,31 @@ export default function Men() {
     <div style={{ fontFamily: 'sans-serif' }}>
       <Navbar title="HERCULES" />
 
-      {/* Hero Section - Men */}
-      <div style={{ width: '100%', height: 'auto' }}>
-        <img 
-          src={MainMenPoster} 
-          style={{ width: '100%', height: 'auto', display: 'block' }} 
-          alt="Poster" 
-        />
+      {/* Hero Section - 5 Block Infinite Conveyor Belt */}
+      <div style={{ width: '100%', height: '500px', overflow: 'hidden' }}>
+        <div style={{
+          display: 'flex',
+          height: '100%',
+          width: '100%',
+          transform: `translateX(-${currentHeroIndex * 20}%)`,
+          // Turn off the transition during the hidden snap back to 0
+          transition: isTransitioning ? 'transform 1s ease-in-out' : 'none'
+        }}>
+          {displayImages.map((imgSrc, index) => (
+            <img 
+              key={index}
+              src={imgSrc} 
+              alt={`Hercules Men Collection ${index}`} 
+              style={{ 
+                // flex: '0 0 20%' forces every single image to be exactly 1/5th of the screen width
+                flex: '0 0 20%', 
+                height: '100%',
+                objectFit: 'cover'
+              }} 
+            />
+          ))}
+        </div>
       </div>
-
 
       {/* NEW ARRIVED Section */}
       <div style={{ backgroundColor: '#f5f5f5', padding: '60px 40px' }}>
@@ -200,4 +255,4 @@ export default function Men() {
       </div>
     </div>
   );
-}
+  }

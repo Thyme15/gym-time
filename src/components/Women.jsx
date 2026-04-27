@@ -3,12 +3,53 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 import ProductCard from './ui/productImage';
-import MainWomenPoster from '../assets/MainWomenPoster.png';
 
 export default function Women() {
   const navigate = useNavigate();
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [products, setProducts] = useState([]);
+
+  // --- INFINITE RANDOMIZED SLIDER LOGIC ---
+  // Make sure you save these images in your public/images/ folder!
+  const heroImages = [
+    '/images/wm1.png',
+    '/images/wm2.png',
+    '/images/wm3.png',
+    '/images/wm4.png',
+    '/images/wm5.png'
+  ];
+
+  // Randomize the array once on load, then duplicate it for the endless loop
+  const [displayImages] = useState(() => {
+    const shuffled = [...heroImages].sort(() => 0.5 - Math.random());
+    return [...shuffled, ...shuffled];
+  });
+
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+
+  // 1. The main timer that slides the images every 4 seconds
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setIsTransitioning(true);
+      setCurrentHeroIndex((prevIndex) => prevIndex + 1);
+    }, 4000);
+
+    return () => clearInterval(slideTimer);
+  }, []);
+
+  // 2. The "Seamless Snap" effect
+  useEffect(() => {
+    if (currentHeroIndex === displayImages.length / 2) {
+      const resetTimer = setTimeout(() => {
+        setIsTransitioning(false); 
+        setCurrentHeroIndex(0); 
+      }, 1000);
+
+      return () => clearTimeout(resetTimer);
+    }
+  }, [currentHeroIndex, displayImages.length]);
+  // --- END SLIDER LOGIC ---
 
   useEffect(() => {
     fetch('/api/products')
@@ -38,15 +79,32 @@ export default function Women() {
     <div style={{ fontFamily: 'sans-serif' }}>
       <Navbar title="HERCULES" />
 
-      {/* Hero Section - Women */}
-      <div style={{ width: '100%', height: 'auto' }}>
-        <img 
-          src={MainWomenPoster} 
-          style={{ width: '100%', height: 'auto', display: 'block' }} 
-          alt="Poster" 
-        />
+      {/* Hero Section - Women's Infinite Conveyor Belt */}
+      <div style={{ width: '100%', height: '500px', overflow: 'hidden' }}>
+        <div style={{
+          display: 'flex',
+          height: '100%',
+          width: '100%',
+          transform: `translateX(-${currentHeroIndex * 20}%)`,
+          transition: isTransitioning ? 'transform 1s ease-in-out' : 'none'
+        }}>
+          {displayImages.map((imgSrc, index) => (
+            <img 
+              key={index}
+              src={imgSrc} 
+              alt={`Hercules Women Collection ${index}`} 
+              style={{ 
+                flex: '0 0 20%', 
+                height: '100%',
+                objectFit: 'cover'
+              }} 
+              onError={(e) => {
+                e.target.src = `https://placehold.co/400x600/f5f5f5/c9a22a?text=Women+Img`;
+              }}
+            />
+          ))}
+        </div>
       </div>
-
 
       {/* NEW ARRIVED Section */}
       <div style={{ backgroundColor: '#f5f5f5', padding: '60px 40px' }}>
