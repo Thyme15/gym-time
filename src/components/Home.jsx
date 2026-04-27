@@ -11,12 +11,21 @@ export default function Home() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   const isAdmin = user?.type === 'admin';
   const [products, setProducts] = useState([]);
+  const [quote, setQuote] = useState({
+    content: '', author: ''
+  });
 
   useEffect(() => {
     fetch('/api/products')
       .then((r) => r.json())
       .then((data) => setProducts(Array.isArray(data) ? data : []))
       .catch((err) => console.error('Error fetching products:', err));
+    fetch('https://dummyjson.com/quotes/random')
+      .then(res => res.json())
+      .then(data => {
+        setQuote({ content: data.quote, author: data.author });
+      })
+      .catch(err => console.error(err));
   }, []);
 
   // First 3 products → new arrivals carousel
@@ -228,6 +237,10 @@ export default function Home() {
               />
             </div>
           ))}
+        </div>
+        <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f9f9f9', borderRadius: '10px', margin: '30px' }}>
+          <h3 style={{ fontStyle: 'italic', color: '#555', fontSize: '25px' }}>"{quote.content}"</h3>
+          <p style={{ fontWeight: 'bold', color: '#c9a22a' }}>- {quote.author}</p>
         </div>
       </div>
     </div>

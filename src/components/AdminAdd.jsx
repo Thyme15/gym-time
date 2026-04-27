@@ -5,6 +5,7 @@ import { Plus, Settings, Image as ImageIcon } from 'lucide-react';
 export default function AdminAdd() {
     const navigate = useNavigate();
     const [productID, setProductID] = useState('');
+    const [productName, setProductName] = useState('');
     const [price, setPrice] = useState('');
     const [quantity, setQuantity] = useState('');
     const [description, setDescription] = useState('');
@@ -18,7 +19,7 @@ export default function AdminAdd() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     productID, 
-                    productName: productID, // ใช้ ID เป็นชื่อชั่วคราว หรือเพิ่มช่องชื่อได้ครับ
+                    productName, 
                     price, 
                     quantity, 
                     description, 
@@ -28,7 +29,7 @@ export default function AdminAdd() {
             const data = await response.json();
             if (data.status === 'success') {
                 alert("Saved successfully!");
-                navigate('/admin');
+                navigate('/admin/add');
             }
         } catch (err) {
             console.error(err);
@@ -66,7 +67,7 @@ export default function AdminAdd() {
                 <h1 style={{ margin: 0, fontSize: '24px', letterSpacing: '1px' }}>HERCULES</h1>
                 <div style={{ display: 'flex', gap: '20px' }}>
                     <Plus size={24} style={{ cursor: 'pointer' }} />
-                    <Settings size={24} style={{ cursor: 'pointer' }} />
+                    <Settings size={24} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/mod/PRD001')}/>
                 </div>
             </div>
 
@@ -79,6 +80,9 @@ export default function AdminAdd() {
                 <div style={sectionStyle}>
                     <label style={labelStyle}>Product ID:</label>
                     <input type="text" value={productID} onChange={(e) => setProductID(e.target.value)} style={inputStyle} />
+
+                    <label style={labelStyle}>Product Name:</label>
+                    <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} style={inputStyle} />
 
                     <div style={{ display: 'flex', gap: '40px' }}>
                         <div style={{ flex: 1 }}>

@@ -33,7 +33,7 @@ connection.connect(function(err) {
 // body: raw JSON
 // {
 //   "email": "somchai@gymtime.com",
-//   "password": "hashed_pw_001"
+//   "password": "ADM01"
 // }
 
 // Testing Login - Failure case (Wrong password)
@@ -143,11 +143,8 @@ app.post('/register', (req, res) => {
         }
     });
 });
-// Testing Get All Products
-// method: get
-// URL: http://localhost:3000/products
 
-// Testing Get All Products (Empty - if no products)
+// Testing Get All Products
 // method: get
 // URL: http://localhost:3000/products
 app.get('/products', (req, res) => {
@@ -205,10 +202,6 @@ app.get('/products/search', (req, res) => {
 // Testing Get Product by ID - Success
 // method: get
 // URL: http://localhost:3000/products/PRD001
-
-// Testing Get Product by ID - Not Found
-// method: get
-// URL: http://localhost:3000/products/INVALID_ID
 app.get('/products/:id', (req, res) => {
     const { id } = req.params;
     const query = `SELECT * FROM Product WHERE product_ID = ?`;
@@ -260,16 +253,17 @@ app.post('/admin/add', (req, res) => {
             return res.status(500).send({ message: "Error adding product basics" });
         }
         // 2. ถ้าบันทึกสินค้าสำเร็จ ให้บันทึกจำนวนสต็อกลงตาราง Stock
-        const stockID = "STK_" + productID;
+        // ปรับ ID ให้สั้นลงเพื่อไม่ให้เกิน 10 ตัวอักษร (S + productID)
+        const stockID = ("S" + productID).substring(0, 10);
         const stockQuery = `INSERT INTO Stock (stock_ID, quantity, product_ID) VALUES (?, ?, ?)`;
         
         connection.query(stockQuery, [stockID, quantity, productID], (err) => {
             if (err) {
                 console.error("Stock Error:", err);
-                // เราไม่หยุดการทำงานที่นี่เผื่อจะไปต่อเรื่องรูปได้
             }
             // 3. บันทึกรูปภาพลงตาราง Image
-            const imageID = "IMG_" + productID;
+            // ปรับ ID ให้สั้นลงเพื่อไม่ให้เกิน 10 ตัวอักษร (I + productID)
+            const imageID = ("I" + productID).substring(0, 10);
             const imageQuery = `INSERT INTO Image (image_ID, description, url, product_ID) VALUES (?, ?, ?, ?)`;
             
             connection.query(imageQuery, [imageID, productName, image, productID], (err) => {
@@ -286,6 +280,17 @@ app.post('/admin/add', (req, res) => {
 });
 
 
+// Testing Admin Update Product - Success case
+// method: put
+// URL: http://localhost:3000/admin/mod/PRD001
+// body: raw JSON
+// {
+//   "product_name": "Updated Name",
+//   "product_price": 2500,
+//   "product_desc": "Updated description",
+//   "quantity": 10,
+//   "image_url": "https://example.com/new-img.jpg"
+// }
 app.put('/admin/mod/:id', (req, res) => {
     const { id } = req.params;
     const { product_name, product_price, product_desc, quantity, image_url } = req.body;
@@ -312,24 +317,35 @@ app.put('/admin/mod/:id', (req, res) => {
     });
 });
 
-// Testing Delete Product - Case 1
+// Testing Delete Product (and its related Stock/Image) - Success case
 // method: delete
-// URL: http://localhost:3000/products/PRD011
-
-// Testing Delete Product - Case 2
-// method: delete
-// URL: http://localhost:3000/products/PRD012
+// URL: http://localhost:3000/products/PRD001
 app.delete('/products/:id', (req, res) => {
     const { id } = req.params;
-    const query = `DELETE FROM Product WHERE product_ID = ?`;
-    connection.query(query, [id], (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send({ message: "Internal Server Error" });
-        }
-        res.send({ status: "success", message: "Product deleted successfully" });
+
+    // 1. ลบจากตาราง Image ก่อน
+    const deleteImage = `DELETE FROM Image WHERE product_ID = ?`;
+    connection.query(deleteImage, [id], (err) => {
+        if (err) console.error(err);
+
+        // 2. ลบจากตาราง Stock
+        const deleteStock = `DELETE FROM Stock WHERE product_ID = ?`;
+        connection.query(deleteStock, [id], (err) => {
+            if (err) console.error(err);
+
+            // 3. สุดท้ายค่อยลบตัวสินค้าจากตาราง Product
+            const deleteProduct = `DELETE FROM Product WHERE product_ID = ?`;
+            connection.query(deleteProduct, [id], (err, result) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send({ message: "Error deleting product" });
+                }
+                res.send({ status: "success", message: "Deleted everything related to this product!" });
+            });
+        });
     });
 });
+
 
 // Catch-all handler: send back index.html for client-side routing
 app.use((req, res) => {
