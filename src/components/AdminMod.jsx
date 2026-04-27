@@ -25,7 +25,8 @@ export default function AdminMod() {
                         setProductName(p.product_name);
                         setPrice(p.product_price);
                         setDescription(p.product_desc);
-                        // หมายเหตุ: สำหรับ quantity และ image อาจต้องเขียน API ดึงเพิ่มถ้าแยกตาราง
+                        setQuantity(p.quantity || 0); // โหลดค่าจำนวน
+                        setImage(p.product_image || ''); // โหลดค่า URL รูปภาพ
                     }
                 });
         }
@@ -33,6 +34,8 @@ export default function AdminMod() {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        // ตรวจสอบว่ากำลังส่งค่าอะไรไปบ้าง
+        console.log("Sending update:", { productName, price, quantity, image });
         try {
             const response = await fetch(`/api/admin/mod/${id}`, {
                 method: 'PUT',
@@ -40,13 +43,15 @@ export default function AdminMod() {
                 body: JSON.stringify({ 
                     product_name: productName, 
                     product_price: price, 
-                    product_desc: description 
+                    product_desc: description,
+                    quantity: quantity,
+                    image_url: image || null  // ส่ง null ถ้าไม่มีค่า
                 }),
             });
             const data = await response.json();
             if (data.status === 'success') {
                 alert("Updated successfully!");
-                navigate('/admin/mod/PRD-000');
+                navigate('/admin/mod/PRD000');
             }
         } catch (err) {
             console.error(err);

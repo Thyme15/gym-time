@@ -148,7 +148,12 @@ app.post('/register', (req, res) => {
 // method: get
 // URL: http://localhost:3000/products
 app.get('/products', (req, res) => {
-    const query = `SELECT * FROM Product`;
+    // JOIN กับ Image เพื่อดึง URL รูปภาพมาโชว์ที่หน้าแรกด้วย
+    const query = `
+        SELECT p.*, i.url AS product_image 
+        FROM Product p
+        LEFT JOIN Image i ON p.product_ID = i.product_ID
+    `;
     connection.query(query, (err, result) => {
         if (err) {
             console.error(err);
@@ -204,7 +209,14 @@ app.get('/products/search', (req, res) => {
 // URL: http://localhost:3000/products/PRD001
 app.get('/products/:id', (req, res) => {
     const { id } = req.params;
-    const query = `SELECT * FROM Product WHERE product_ID = ?`;
+    // JOIN เพื่อดึงทั้งข้อมูลสินค้า, รูปภาพ (url), และจำนวนสต็อก (quantity)
+    const query = `
+        SELECT p.*, i.url AS product_image, s.quantity
+        FROM Product p
+        LEFT JOIN Image i ON p.product_ID = i.product_ID
+        LEFT JOIN Stock s ON p.product_ID = s.product_ID
+        WHERE p.product_ID = ?
+    `;
     connection.query(query, [id], (err, result) => {
         if (err) {
             console.error(err);

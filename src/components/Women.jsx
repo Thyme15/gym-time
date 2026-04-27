@@ -58,8 +58,9 @@ export default function Women() {
       .catch((err) => console.error('Error fetching products:', err));
   }, []);
 
-  // First 3 products → new arrivals carousel
-  const newArrivedProducts = products.slice(0, 3);
+  const newArrivedProducts = products.filter(p => 
+    ['PRD004', 'PRD005', 'PRD006'].includes(p.product_ID)
+  );
   // Rest → seasonal section (or all if fewer than 4)
   const seasonalProducts = products.length > 3 ? products.slice(3) : products;
 
@@ -160,9 +161,9 @@ export default function Women() {
                 <img
                   src={productImage(product)}
                   alt={product.product_name}
-                  style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px' }}
+                  style={{ width: '100%', height: '220px', objectFit: 'contain' }}
                 />
-                <p style={{ textAlign: 'center', marginTop: '10px', fontWeight: '600', fontSize: '14px' }}>
+                <p style={{ textAlign: 'center', marginTop: '10px', fontWeight: '600', fontSize: '14px', color: '#1a1a1a' }}>
                   {product.product_name}
                 </p>
               </div>

@@ -157,9 +157,9 @@ export default function Men() {
                 <img
                   src={productImage(product)}
                   alt={product.product_name}
-                  style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px' }}
+                  style={{ width: '100%', height: '220px', objectFit: 'contain' }}
                 />
-                <p style={{ textAlign: 'center', marginTop: '10px', fontWeight: '600', fontSize: '14px' }}>
+                <p style={{ textAlign: 'center', marginTop: '10px', fontWeight: '600', fontSize: '14px', color: 'white' }}>
                   {product.product_name}
                 </p>
               </div>

@@ -29,7 +29,9 @@ export default function Home() {
   }, []);
 
   // First 3 products → new arrivals carousel
-  const newArrivedProducts = products.slice(0, 3);
+  const newArrivedProducts = products.filter(p => 
+    ['PRD007', 'PRD008', 'PRD009'].includes(p.product_ID)
+  );
   // Rest → seasonal section (or all if fewer than 4)
   const seasonalProducts = products.length > 3 ? products.slice(3) : products;
 
@@ -53,7 +55,7 @@ export default function Home() {
       {/* Hero Section */}
       <div
         style={{
-          backgroundImage: 'url(https://via.placeholder.com/1200x400?text=Hercules+Hero)',
+          backgroundImage: 'url("/images/MainPoster.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           height: '500px',
@@ -73,20 +75,6 @@ export default function Home() {
             backgroundColor: 'rgba(0, 0, 0, 0.2)',
           }}
         />
-        <h1
-          style={{
-            color: 'white',
-            fontSize: '72px',
-            fontWeight: 'bold',
-            letterSpacing: '4px',
-            textAlign: 'center',
-            position: 'relative',
-            zIndex: 1,
-            textTransform: 'uppercase',
-          }}
-        >
-          Hercules
-        </h1>
       </div>
 
       {/* NEW ARRIVED Section */}
@@ -133,10 +121,10 @@ export default function Home() {
                 key={product.product_ID || index}
                 onClick={() => navigate(`/products/${product.product_ID}`)}
                 style={{
-                  opacity: index === carouselIndex ? 1 : 0.5,
-                  transform: `scale(${index === carouselIndex ? 1 : 0.9})`,
+                  opacity: index === carouselIndex ? 1 : 0.75,
+                  transform: `scale(${index === carouselIndex ? 1.05 : 0.92})`,
                   transition: 'all 0.3s ease',
-                  minWidth: '200px',
+                  minWidth: '220px',
                   cursor: 'pointer',
                 }}
               >
