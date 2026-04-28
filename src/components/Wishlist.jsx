@@ -72,40 +72,64 @@ export default function Wishlist() {
             </p>
 
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-              <button 
-                onClick={() => navigate('/login')}
-                style={{
-                  padding: '10px 24px',
-                  backgroundColor: '#d6aa54',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  fontFamily: 'monospace',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                }}
-              >
-                Create Account
-              </button>
-              <button 
-                onClick={() => navigate('/login')}
-                style={{
-                  padding: '10px 32px',
-                  backgroundColor: '#d6aa54',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  fontFamily: 'monospace',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                }}
-              >
-                Login
-              </button>
+              {localStorage.getItem('user') ? (
+                // ถ้า Login แล้วแต่ Wishlist ว่าง ให้โชว์ปุ่มไปซื้อของ
+                <button 
+                  onClick={() => navigate('/products')}
+                  style={{
+                    padding: '10px 32px',
+                    backgroundColor: '#d6aa54',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontFamily: 'monospace',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }}
+                >
+                  Explore Products
+                </button>
+              ) : (
+                // ถ้ายังไม่ Login ให้โชว์ปุ่มเดิม
+                <>
+                  <button 
+                    onClick={() => navigate('/register')}
+                    style={{
+                      padding: '10px 24px',
+                      backgroundColor: '#d6aa54',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontFamily: 'monospace',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    Create Account
+                  </button>
+                  <button 
+                    onClick={() => navigate('/login')}
+                    style={{
+                      padding: '10px 32px',
+                      backgroundColor: '#d6aa54',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontFamily: 'monospace',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    Login
+                  </button>
+                </>
+              )}
             </div>
           </div>
         ) : (

@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import mysql from 'mysql2';
 import path from 'path';
+import fs from 'fs';
 
 const app = express();
 app.use('/images', express.static('public/images'));
@@ -28,12 +29,17 @@ connection.connect(function(err) {
 });
 
 // Testing Login
-// method: POST
-// URL: http://localhost:3000/login
-// Success Response:
-// { "status": "success", "user": { "email": "admin@gymtime.com", "role": "admin", ... } }
-// Failure Response (Wrong password):
-// { "status": "error", "message": "Invalid email or password" }
+// --- Success Case (User) ---
+// method: POST | URL: http://localhost:3000/login
+// body: { "email": "araya@gmail.com", "password": "hashed_u001" }
+
+// --- Success Case (Admin) ---
+// method: POST | URL: http://localhost:3000/login
+// body: { "email": "somchai@gymtime.com", "password": "ADM001" }
+
+// --- Fail Case (Wrong Password) ---
+// method: POST | URL: http://localhost:3000/login
+// body: { "email": "araya@gmail.com", "password": "wrongpassword" }
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
     
@@ -76,10 +82,13 @@ app.post('/login', (req, res) => {
 });
 
 // Testing Register
-// method: POST
-// URL: http://localhost:3000/register
-// Success Response: { "status": "success", "message": "Registered successfully" }
-// Failure Response: { "message": "Email or User ID already exists" }
+// --- Success Case ---
+// method: POST | URL: http://localhost:3000/register
+// body: { "firstname": "New", "lastname": "User", "address": "MUICT", "email": "new@test.com", "password": "pw123" }
+
+// --- Fail Case (Duplicate Email) ---
+// method: POST | URL: http://localhost:3000/register
+// body: { "firstname": "Araya", "lastname": "Sombat", "address": "123", "email": "araya@gmail.com", "password": "any" }
 app.post('/register', (req, res) => {
     const { firstname, lastname, address, email, password } = req.body;
     
@@ -87,23 +96,35 @@ app.post('/register', (req, res) => {
         return res.status(400).send({ message: "Required fields are missing" });
     }
 
-    const userID = "USR" + Math.floor(Math.random() * 10000);
-    const query = `INSERT INTO User (userID, f_name, l_name, user_email, password, house_number) VALUES (?, ?, ?, ?, ?, ?)`;
-    
-    connection.query(query, [userID, firstname, lastname, email, password, address], (err, result) => {
+    // 🕵️ เช็คก่อนว่า Email นี้มีคนใช้หรือยัง
+    const checkQuery = `SELECT * FROM User WHERE user_email = ?`;
+    connection.query(checkQuery, [email], (err, results) => {
         if (err) {
-            console.error("Register Error:", err);
-            if (err.code === 'ER_DUP_ENTRY') {
-                return res.status(400).send({ message: "Email or User ID already exists" });
-            }
+            console.error("Check Error:", err);
             return res.status(500).send({ message: "Internal Server Error" });
         }
-        
-        if (result.affectedRows > 0) {
-            res.send({ status: "success", message: "Registered successfully" });
-        } else {
-            res.status(400).send({ status: "error", message: "Registration failed" });
+
+        if (results.length > 0) {
+            // ถ้าเจอ Email นี้แล้ว ให้บอกว่าซ้ำทันที
+            return res.status(400).send({ status: "error", message: "This email is already in use!" });
         }
+
+        // ✅ ถ้าไม่ซ้ำ ค่อยทำการบันทึก
+        const userID = "USR" + Math.floor(Math.random() * 10000);
+        const query = `INSERT INTO User (userID, f_name, l_name, user_email, password, house_number) VALUES (?, ?, ?, ?, ?, ?)`;
+        
+        connection.query(query, [userID, firstname, lastname, email, password, address], (err, result) => {
+            if (err) {
+                console.error("Register Error:", err);
+                return res.status(500).send({ message: "Internal Server Error" });
+            }
+            
+            if (result.affectedRows > 0) {
+                res.send({ status: "success", message: "Registered successfully" });
+            } else {
+                res.status(400).send({ status: "error", message: "Registration failed" });
+            }
+        });
     });
 });
 
@@ -130,6 +151,7 @@ app.get('/products', (req, res) => {
 // Testing Search Products
 // method: GET
 // URL: http://localhost:3000/products/search?name=Raven
+// Example params: ?name=Raven&minPrice=1000&maxPrice=5000
 // Success Response: [{ "product_ID": "PRD001", ... }]
 app.get('/products/search', (req, res) => {
     const { name, minPrice, maxPrice, desc } = req.query;
@@ -185,9 +207,13 @@ app.get('/products/:id', (req, res) => {
 });
 
 // Testing Admin Add Product
-// method: POST
-// URL: http://localhost:3000/admin/add
-// Success Response: { "status": "success", "message": "Complete! ..." }
+// --- Success Case ---
+// method: POST | URL: http://localhost:3000/admin/add
+// body: { "productID": "PRD555", "productName": "Super Gear", "price": 999, "quantity": 10, "description": "Cool item", "image": "http://link.com" }
+
+// --- Fail Case (Duplicate ID) ---
+// method: POST | URL: http://localhost:3000/admin/add
+// body: { "productID": "PRD001", "productName": "Repeat", "price": 100, "quantity": 1, "description": "X", "image": "X" }
 app.post('/admin/add', (req, res) => {
     const { productID, productName, price, description, quantity, image } = req.body;
     const adminID = 'ADM001'; 
@@ -221,8 +247,13 @@ app.post('/admin/add', (req, res) => {
 });
 
 // Testing Admin Update Product
-// method: PUT
-// URL: http://localhost:3000/admin/mod/PRD001
+// --- Success Case ---
+// method: PUT | URL: http://localhost:3000/admin/mod/PRD001
+// body: { "product_name": "Raven V2", "product_price": 1350, "product_desc": "Better!", "quantity": 100, "image_url": "/images/new.png" }
+
+// --- Fail Case (Non-existent ID) ---
+// method: PUT | URL: http://localhost:3000/admin/mod/NONEXIST
+// body: { "product_name": "Doesn't work" }
 app.put('/admin/mod/:id', (req, res) => {
     const { id } = req.params;
     const { product_name, product_price, product_desc, quantity, image_url } = req.body;
@@ -232,6 +263,12 @@ app.put('/admin/mod/:id', (req, res) => {
             console.error(err);
             return res.status(500).send({ message: "Error updating product" });
         }
+
+        // 🔍 เช็คว่ามีสินค้าถูกแก้ไขจริงไหม
+        if (result.affectedRows === 0) {
+            return res.status(404).send({ status: "error", message: "Product ID not found. No changes made." });
+        }
+
         const stockQuery = `UPDATE Stock SET quantity = ? WHERE product_ID = ?`;
         connection.query(stockQuery, [quantity, id], (err) => {
             if (err) console.error("Stock update error:", err);
@@ -245,8 +282,11 @@ app.put('/admin/mod/:id', (req, res) => {
 });
 
 // Testing Delete Product
-// method: DELETE
-// URL: http://localhost:3000/products/PRD001
+// --- Success Case ---
+// method: DELETE | URL: http://localhost:3000/products/PRD001
+
+// --- Fail Case (Invalid ID) ---
+// method: DELETE | URL: http://localhost:3000/products/99999
 app.delete('/products/:id', (req, res) => {
     const { id } = req.params;
     
@@ -279,6 +319,11 @@ app.delete('/products/:id', (req, res) => {
                             console.error("Product Delete Error:", err);
                             return res.status(500).send({ message: "Error deleting product from database" });
                         }
+
+                        if (result.affectedRows === 0) {
+                            return res.status(404).send({ status: "error", message: "Product ID not found. No records deleted." });
+                        }
+                        
                         res.send({ status: "success", message: "Deleted all records related to this product!" });
                     });
                 });
@@ -287,9 +332,20 @@ app.delete('/products/:id', (req, res) => {
     });
 });
 
-// Catch-all handler: send back index.html for client-side routing
+// Catch-all handler:
 app.use((req, res) => {
-    res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+    const indexPath = path.join(process.cwd(), 'dist', 'index.html');
+    
+    // เช็คก่อนว่ามีไฟล์ใน dist ไหม (มีกรณีเดียวคือรันบน Production)
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        // ถ้าไม่มี (เช่นรันบน Dev mode) ให้บอกว่าหา API นี้ไม่เจอแทน
+        res.status(404).send({ 
+            status: "error", 
+            message: `Route ${req.method} ${req.url} not found on this server.` 
+        });
+    }
 });
 
 const PORT = process.env.PORT || 3000;
