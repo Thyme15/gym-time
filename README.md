@@ -1,16 +1,21 @@
-# React + Vite
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/yulh2HmM)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Project Phase 2 - Group 03
 
-Currently, two official plugins are available:
+## React + Vite Development
+This project is built using the **Vite** build tool for a fast React development experience. 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Features
+- **Hot Module Replacement (HMR)** for instant feedback during coding.
+- **ESLint** rules enabled for code quality.
+- Integration with the official React and SWC plugins.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Getting Started
 
-## Expanding the ESLint configuration
+To run this project locally, follow these steps:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Install dependencies:**
+   ```bash
+   npm install
