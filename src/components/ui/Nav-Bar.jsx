@@ -1,4 +1,4 @@
-import { Menu, ShoppingBag, Heart, User } from 'lucide-react';
+import { Menu, ShoppingBag, Heart, User, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 
@@ -27,16 +27,31 @@ export default function Navbar(prop) {
                 <ShoppingBag size={24} strokeWidth={1.5} onClick={() => navigate('/cart')} style={{ cursor: 'pointer' }} />
                 <Heart size={24} strokeWidth={1.5} onClick={() => navigate('/wishlist')} style={{ cursor: 'pointer' }} />
                 
-                <div 
-                  onClick={() => navigate('/login')} 
-                  style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-                >
-                  {localStorage.getItem('user') && (
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#1a1a1a' }}>
-                      Hi, {JSON.parse(localStorage.getItem('user')).f_name}
-                    </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {localStorage.getItem('user') ? (
+                    <>
+                      <span 
+                        style={{ fontSize: '14px', fontWeight: 'bold', color: '#1a1a1a', cursor: 'pointer' }}
+                      >
+                        Hi, {JSON.parse(localStorage.getItem('user')).f_name}
+                      </span>
+                      <User size={24} strokeWidth={1.5} style={{ cursor: 'pointer' }} />
+                      <LogOut 
+                        size={22} 
+                        strokeWidth={1.5} 
+                        onClick={() => {
+                          localStorage.removeItem('user');
+                          navigate('/login');
+                        }} 
+                        style={{ cursor: 'pointer', marginLeft: '8px', color: '#e53e3e' }}
+                        title="Logout"
+                      />
+                    </>
+                  ) : (
+                    <div onClick={() => navigate('/login')} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <User size={24} strokeWidth={1.5} />
+                    </div>
                   )}
-                  <User size={24} strokeWidth={1.5} />
                 </div>
             </div>
         </div>
