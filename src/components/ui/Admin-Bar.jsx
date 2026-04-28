@@ -1,8 +1,13 @@
-import { Settings, Plus } from 'lucide-react';
+import { Settings, Plus, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminBar(prop) {
     const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('user'); // ลบข้อมูลการ Login
+        navigate('/login'); // กลับไปหน้า Login
+    };
 
     return (
         <header style={{ width: '100%', fontFamily: 'sans-serif' }}>
@@ -18,7 +23,7 @@ export default function AdminBar(prop) {
                     {prop.title}
                 </h1>
 
-                <div style={{ display: 'flex', gap: '24px', cursor: 'pointer', flex: 1, justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', gap: '24px', cursor: 'pointer', flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
                     <Settings 
                         size={24} 
                         strokeWidth={1.5} 
@@ -28,6 +33,12 @@ export default function AdminBar(prop) {
                         size={24} 
                         strokeWidth={1.5} 
                         onClick={() => navigate('/admin/add')} 
+                    />
+                    <LogOut 
+                        size={24} 
+                        strokeWidth={1.5} 
+                        onClick={handleLogout} 
+                        style={{ color: '#d9534f' }} // ใช้สีแดงเพื่อให้รู้ว่าเป็นปุ่มออก
                     />
                 </div>
 

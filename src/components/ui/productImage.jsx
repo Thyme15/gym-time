@@ -67,7 +67,6 @@ export default function ProductCard({
     }
     localStorage.setItem('wishlist', JSON.stringify(newWishlist));
   };
-  const [activeColor, setActiveColor] = useState(0);
 
   const stars = Array.from({ length: 5 }, (_, i) => {
     const filled = i < Math.floor(rating);
@@ -183,28 +182,6 @@ export default function ProductCard({
           text-transform: uppercase;
         }
 
-        /* Color swatches */
-        .gt-swatches {
-          display: flex;
-          gap: 7px;
-          margin-bottom: 13px;
-          align-items: center;
-        }
-        .gt-swatch {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          border: 1.5px solid transparent;
-          cursor: pointer;
-          transition: transform 0.18s, box-shadow 0.18s;
-          flex-shrink: 0;
-          outline: none;
-          box-sizing: border-box;
-        }
-        .gt-swatch:hover { transform: scale(1.2); }
-        .gt-swatch.active {
-          box-shadow: 0 0 0 2px #fafaf8, 0 0 0 3.5px #1a1a1a;
-        }
 
         /* Title */
         .gt-title {
@@ -295,29 +272,6 @@ export default function ProductCard({
 
         {/* Info Section */}
         <div className="gt-info">
-          {/* Category + Sizes */}
-          <div className="gt-top-row">
-            <span className="gt-meta">{category}</span>
-            <span className="gt-meta">{sizes}</span>
-          </div>
-
-          {/* Color Swatches */}
-          <div className="gt-swatches">
-            {colors.map((c, i) => (
-              <button
-                key={i}
-                className={`gt-swatch${activeColor === i ? " active" : ""}`}
-                style={{
-                  background: c.hex,
-                  border: `1.5px solid ${c.hex === "#f5f5f0" || c.hex === "#fafaf8" ? "#ccc" : c.hex}`,
-                }}
-                title={c.label}
-                onClick={(e) => { e.stopPropagation(); setActiveColor(i); }}
-                aria-label={c.label}
-              />
-            ))}
-          </div>
-
           {/* Title */}
           <div className="gt-title">{title}</div>
 

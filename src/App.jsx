@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import Home from './components/Home'
 import Login from './components/Login'
@@ -16,6 +16,18 @@ import About from './components/AboutUs'
 import Accessories from './components/Accessories'
 import Shoes from './components/Shoes'
 
+// 🛡️ Component สำหรับป้องกันการเข้าถึงหน้า Admin โดยตรงผ่าน URL
+const ProtectedRoute = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  
+  // ถ้าไม่มีการ Login หรือ Login แล้วแต่ไม่ใช่สิทธิ admin
+  if (!user || user.type !== 'admin') {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
+
 function App() {
   return (
     <Router>
@@ -30,12 +42,22 @@ function App() {
         <Route path="/women" element={<Women />} />
         <Route path="/search" element={<Search />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/admin/add" element={<AdminAdd />} />
-        <Route path="/admin/mod/:id" element={<AdminMod />} />
+        
+        {/* 🔒 หน้าที่ต้องผ่านการตรวจสอบสิทธิ Admin เท่านั้น */}
+        <Route path="/admin/add" element={
+          <ProtectedRoute>
+            <AdminAdd />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/mod/:id" element={
+          <ProtectedRoute>
+            <AdminMod />
+          </ProtectedRoute>
+        } />
+        
         <Route path="/about" element={<About />} />
         <Route path="/accessories" element={<Accessories />} />
         <Route path="/shoes" element={<Shoes />} />
-        {/* Add more routes here */}
       </Routes>
     </Router>
   )

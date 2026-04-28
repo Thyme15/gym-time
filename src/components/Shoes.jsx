@@ -16,11 +16,14 @@ export default function Shoes() {
       .catch((err) => console.error('Error fetching products:', err));
   }, []);
 
-  const newArrivedProducts = products.filter(p => 
-    ['PRD007', 'PRD008', 'PRD009'].includes(p.product_ID) 
-  );
-  
-  const seasonalProducts = products.length > 3 ? products.slice(3) : products;
+  const shoeProducts = products.filter(p => {
+    // Check only the NAME for shoes to avoid matches with "shoe compartment" in bags
+    const name = (p.product_name || "").toLowerCase();
+    return name.includes('shoe');
+  });
+
+  const newArrivedProducts = shoeProducts.slice(0, 3);
+  const seasonalProducts = shoeProducts;
 
   const handlePrevCarousel = () => {
     setCarouselIndex((prev) => (prev - 1 + Math.max(newArrivedProducts.length, 1)) % Math.max(newArrivedProducts.length, 1));

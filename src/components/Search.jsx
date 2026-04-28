@@ -6,9 +6,10 @@ import ProductCard from './ui/productImage';
 export default function Search() {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
-    supplements: [],
-    equipment: [],
-    accessories: [],
+    arrival: [],
+    genders: [],
+    clothes: [],
+    shoes: [],
   });
 
   const [products, setProducts] = useState([]);
@@ -73,21 +74,39 @@ export default function Search() {
     setLoading(true);
     setSearched(true);
     
-    // Gather all selected filter values
-    const activeFilters = [
-      ...filters.supplements,
-      ...filters.equipment,
-      ...filters.accessories
-    ].map(f => f.toLowerCase());
+    // 1. Get active categories (those that have at least one checkbox ticked)
+    const activeCategories = Object.keys(filters).filter(cat => filters[cat].length > 0);
 
-    if (activeFilters.length === 0) {
-      // Show all products if no filters selected
+    if (activeCategories.length === 0) {
       setDisplayedProducts(products);
     } else {
-      // Filter products: matches ANY selected filter in name or description
+      // 2. Filter products: Must match ALL active categories (AND logic)
       const filtered = products.filter(product => {
-        const textToSearch = `${product.product_name} ${product.product_desc}`.toLowerCase();
-        return activeFilters.some(filter => textToSearch.includes(filter));
+        const name = (product.product_name || "").toLowerCase();
+        const desc = (product.product_desc || "").toLowerCase();
+        const textToSearch = `${name} ${desc}`;
+
+        // Check if product satisfies every active category
+        return activeCategories.every(category => {
+          const categoryFilters = filters[category];
+          
+          return categoryFilters.some(filterValue => {
+            const val = filterValue.toLowerCase();
+            
+            // Special fix for "men" vs "women"
+            if (val === 'men') {
+              const regex = new RegExp('\\bmen\\b', 'i');
+              return regex.test(textToSearch);
+            }
+
+            if (val === 'accessories') {
+              // If filtering by Accessories, search for these three keywords
+              return ['flask', 'bag', 'glove'].some(keyword => textToSearch.includes(keyword));
+            }
+            
+            return textToSearch.includes(val);
+          });
+        });
       });
       setDisplayedProducts(filtered);
     }
@@ -105,40 +124,50 @@ export default function Search() {
           {/* Table Container */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             
-            {/* Supplements Row */}
+            {/* Arrival Row */}
             <div style={{ display: 'flex', borderBottom: '1px solid #ccc', minHeight: '80px' }}>
-              <div style={{ width: '200px', backgroundColor: '#dbdbdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '18px' }}>
-                Supplements
+              <div style={{ width: '200px', backgroundColor: '#dbdbdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontFamily: 'serif', fontSize: '18px' }}>
+                Arrival
               </div>
               <div style={{ flex: 1, padding: '0 40px', display: 'flex', alignItems: 'center', gap: '40px' }}>
-                <FilterCheckbox label="Protein" category="supplements" value="protein" />
-                <FilterCheckbox label="Pre-Workout" category="supplements" value="pre-workout" />
-                <FilterCheckbox label="Bars" category="supplements" value="bar" />
+                <FilterCheckbox label="New Arrival" category="arrival" value="raven" />
               </div>
             </div>
 
-            {/* Equipment Row */}
+            {/* Genders Row */}
             <div style={{ display: 'flex', borderBottom: '1px solid #ccc', minHeight: '80px' }}>
-              <div style={{ width: '200px', backgroundColor: '#dbdbdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '18px' }}>
-                Equipment
+              <div style={{ width: '200px', backgroundColor: '#dbdbdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontFamily: 'serif', fontSize: '18px' }}>
+                Genders
               </div>
-              <div style={{ flex: 1, padding: '0 40px', display: 'flex', alignItems: 'center', gap: '40px', flexWrap: 'wrap' }}>
-                <FilterCheckbox label="Weights" category="equipment" value="dumbbell" />
-                <FilterCheckbox label="Bands" category="equipment" value="band" />
-                <FilterCheckbox label="Mats" category="equipment" value="mat" />
+              <div style={{ flex: 1, padding: '0 40px', display: 'flex', alignItems: 'center', gap: '40px' }}>
+                <FilterCheckbox label="Men" category="genders" value="men" />
+                <FilterCheckbox label="Women" category="genders" value="women" />
               </div>
             </div>
 
-            {/* Accessories Row */}
+            {/* Clothes Row */}
             <div style={{ display: 'flex', borderBottom: '1px solid #ccc', minHeight: '80px' }}>
-              <div style={{ width: '200px', backgroundColor: '#dbdbdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '18px' }}>
-                Accessories
+              <div style={{ width: '200px', backgroundColor: '#dbdbdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontFamily: 'serif', fontSize: '18px' }}>
+                Clothes
               </div>
               <div style={{ flex: 1, padding: '0 40px', display: 'flex', alignItems: 'center', gap: '40px', flexWrap: 'wrap' }}>
-                <FilterCheckbox label="Gloves" category="accessories" value="glove" />
-                <FilterCheckbox label="Bags" category="accessories" value="bag" />
-                <FilterCheckbox label="Recovery" category="accessories" value="recovery" />
-                <FilterCheckbox label="Cardio" category="accessories" value="rope" />
+                <FilterCheckbox label="T- Shirt" category="clothes" value="tee" />
+                <FilterCheckbox label="Pant" category="clothes" value="pant" />
+                <FilterCheckbox label="Hoodie" category="clothes" value="hoodie" />
+                <FilterCheckbox label="Accessories" category="clothes" value="accessories" />
+              </div>
+            </div>
+
+            {/* Shoes Row */}
+            <div style={{ display: 'flex', borderBottom: '1px solid #ccc', minHeight: '80px' }}>
+              <div style={{ width: '200px', backgroundColor: '#dbdbdb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontFamily: 'serif', fontSize: '18px' }}>
+                Shoes
+              </div>
+              <div style={{ flex: 1, padding: '0 40px', display: 'flex', alignItems: 'center', gap: '40px', flexWrap: 'wrap' }}>
+                <FilterCheckbox label="Original" category="shoes" value="shoe" />
+                <FilterCheckbox label="Running" category="shoes" value="running" />
+                <FilterCheckbox label="Gym & Training" category="shoes" value="training" />
+                <FilterCheckbox label="Basketball" category="shoes" value="basketball" />
               </div>
             </div>
 

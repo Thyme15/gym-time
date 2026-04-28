@@ -19,20 +19,31 @@ export default function Navbar(prop) {
 
             <div style={{flex: 1}}></div>
 
-            <h1 onClick={() => navigate('/')} style={{margin: 0, color: 'black', fontSize: '32px', fontWeight: 'bold', letterSpacing: '2px', textAlign: 'center', flex: 1, textTransform: 'uppercase', cursor: 'pointer'}}>
+            <h1 onClick={() => navigate('/')} style={{margin: 0, color: 'black', fontSize: '32px', fontWeight: 'bold', letterSpacing: '2px', textAlign: 'center', flex: 1, textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1}}>
             {prop.title}
             </h1>
 
-            <div style={{ display: 'flex', gap: '24px', cursor: 'pointer', flex: 1, justifyContent: 'flex-end', alignItem: 'center'}}>
+            <div style={{ display: 'flex', gap: '24px', cursor: 'pointer', flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
                 <ShoppingBag size={24} strokeWidth={1.5} onClick={() => navigate('/cart')} style={{ cursor: 'pointer' }} />
                 <Heart size={24} strokeWidth={1.5} onClick={() => navigate('/wishlist')} style={{ cursor: 'pointer' }} />
-                <User size={24} strokeWidth={1.5} onClick={() => navigate('/login')} style={{ cursor: 'pointer' }} />
+                
+                <div 
+                  onClick={() => navigate('/login')} 
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                >
+                  {localStorage.getItem('user') && (
+                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#1a1a1a' }}>
+                      Hi, {JSON.parse(localStorage.getItem('user')).f_name}
+                    </span>
+                  )}
+                  <User size={24} strokeWidth={1.5} />
+                </div>
             </div>
         </div>
 
         {/* Bottom Row: Menu Icon & Search Bar */}
         <div style={{display:'flex', alignItems:'center', gap: '40px'}}>
-          <div style={{ cursor: 'pointer', dispaly: 'flex', justifyContent: 'flex-start'}}>
+          <div style={{ cursor: 'pointer', display: 'flex', justifyContent: 'flex-start'}}>
             <Menu size={32} strokeWidth={1.5} />
           </div>
 

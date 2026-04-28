@@ -16,10 +16,13 @@ export default function Accessories() {
       .catch((err) => console.error('Error fetching products:', err));
   }, []);
 
-  const newArrivedProducts = products.filter(p => 
-    ['PRD017', 'PRD018', 'PRD019'].includes(p.product_ID)
-  );
-  const seasonalProducts = products.length > 3 ? products.slice(3) : products;
+  const accessoryProducts = products.filter(p => {
+    const text = `${p.product_name} ${p.product_desc}`.toLowerCase();
+    return ['flask', 'bag', 'glove'].some(keyword => text.includes(keyword));
+  });
+
+  const newArrivedProducts = accessoryProducts.slice(0, 3);
+  const seasonalProducts = accessoryProducts;
 
   const handlePrevCarousel = () => {
     setCarouselIndex((prev) => (prev - 1 + Math.max(newArrivedProducts.length, 1)) % Math.max(newArrivedProducts.length, 1));

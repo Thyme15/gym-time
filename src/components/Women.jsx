@@ -16,11 +16,13 @@ export default function Women() {
       .catch((err) => console.error('Error fetching products:', err));
   }, []);
 
-  const newArrivedProducts = products.filter(p => 
-    ['PRD004', 'PRD005', 'PRD006'].includes(p.product_ID)
-  );
-  
-  const seasonalProducts = products.length > 3 ? products.slice(3) : products;
+  const womenProducts = products.filter(p => {
+    const text = `${p.product_name} ${p.product_desc}`.toLowerCase();
+    return text.includes('women');
+  });
+
+  const newArrivedProducts = womenProducts.slice(0, 3);
+  const seasonalProducts = womenProducts;
 
   const handlePrevCarousel = () => {
     setCarouselIndex((prev) => (prev - 1 + Math.max(newArrivedProducts.length, 1)) % Math.max(newArrivedProducts.length, 1));

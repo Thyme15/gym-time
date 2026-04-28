@@ -16,8 +16,14 @@ export default function Men() {
       .catch((err) => console.error('Error fetching products:', err));
   }, []);
 
-  const newArrivedProducts = products.slice(0, 3);
-  const seasonalProducts = products.length > 3 ? products.slice(3) : products;
+  const menProducts = products.filter(p => {
+    const text = `${p.product_name} ${p.product_desc}`.toLowerCase();
+    const regex = new RegExp('\\bmen\\b', 'i');
+    return regex.test(text);
+  });
+
+  const newArrivedProducts = menProducts.slice(0, 3);
+  const seasonalProducts = menProducts;
 
   const handlePrevCarousel = () => {
     setCarouselIndex((prev) => (prev - 1 + Math.max(newArrivedProducts.length, 1)) % Math.max(newArrivedProducts.length, 1));

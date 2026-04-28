@@ -44,7 +44,7 @@ export default function Cart() {
               viewBox="0 0 120 120"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              style={{ marginBottom: '24px' }}
+              style={{ display: 'block', margin: '0 auto 24px' }}
             >
               {/* Bag body */}
               <rect x="14" y="38" width="92" height="72" rx="8" stroke="#2a2a2a" strokeWidth="3" fill="none" />
@@ -75,7 +75,7 @@ export default function Cart() {
 
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
               <button
-                onClick={() => navigate('/products')}
+                onClick={() => navigate('/men')}
                 style={{
                   padding: '10px 24px',
                   backgroundColor: '#c9a22a',
@@ -91,7 +91,7 @@ export default function Cart() {
                 Shop Mens
               </button>
               <button
-                onClick={() => navigate('/products')}
+                onClick={() => navigate('/women')}
                 style={{
                   padding: '10px 24px',
                   backgroundColor: '#c9a22a',

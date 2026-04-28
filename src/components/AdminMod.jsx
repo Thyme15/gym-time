@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Settings, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { Image as ImageIcon, Trash2 } from 'lucide-react';
+import AdminBar from './ui/Admin-Bar';
 
 export default function AdminMod() {
     const navigate = useNavigate();
@@ -99,13 +100,7 @@ export default function AdminMod() {
     return (
         <div style={{ backgroundColor: '#c4bdb0', minHeight: '100vh', fontFamily: 'serif' }}>
             {/* Header */}
-            <div style={{ backgroundColor: 'white', padding: '15px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ddd' }}>
-                <h1 style={{ margin: 0, fontSize: '24px', letterSpacing: '1px' }}>HERCULES</h1>
-                <div style={{ display: 'flex', gap: '20px' }}>
-                    <Plus size={24} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/add')} />
-                    <Settings size={24} style={{ cursor: 'pointer' }} />
-                </div>
-            </div>
+            <AdminBar title="HERCULES" />
 
             {/* Content Area */}
             <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px' }}>

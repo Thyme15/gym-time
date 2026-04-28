@@ -249,19 +249,39 @@ app.put('/admin/mod/:id', (req, res) => {
 // URL: http://localhost:3000/products/PRD001
 app.delete('/products/:id', (req, res) => {
     const { id } = req.params;
+    
+    // Sequence of deletions to satisfy foreign key constraints:
+    // 1. Image
+    // 2. Stock
+    // 3. Modify (History)
+    // 4. Purchase (Transaction History)
+    // 5. Finally, the Product itself
+    
     const deleteImage = `DELETE FROM Image WHERE product_ID = ?`;
     connection.query(deleteImage, [id], (err) => {
-        if (err) console.error(err);
+        if (err) console.error("Image Delete Error:", err);
+        
         const deleteStock = `DELETE FROM Stock WHERE product_ID = ?`;
         connection.query(deleteStock, [id], (err) => {
-            if (err) console.error(err);
-            const deleteProduct = `DELETE FROM Product WHERE product_ID = ?`;
-            connection.query(deleteProduct, [id], (err, result) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send({ message: "Error deleting product" });
-                }
-                res.send({ status: "success", message: "Deleted everything related to this product!" });
+            if (err) console.error("Stock Delete Error:", err);
+            
+            const deleteModify = `DELETE FROM Modify WHERE product_ID = ?`;
+            connection.query(deleteModify, [id], (err) => {
+                if (err) console.error("Modify Delete Error:", err);
+                
+                const deletePurchase = `DELETE FROM Purchase WHERE product_ID = ?`;
+                connection.query(deletePurchase, [id], (err) => {
+                    if (err) console.error("Purchase Delete Error:", err);
+                    
+                    const deleteProduct = `DELETE FROM Product WHERE product_ID = ?`;
+                    connection.query(deleteProduct, [id], (err, result) => {
+                        if (err) {
+                            console.error("Product Delete Error:", err);
+                            return res.status(500).send({ message: "Error deleting product from database" });
+                        }
+                        res.send({ status: "success", message: "Deleted all records related to this product!" });
+                    });
+                });
             });
         });
     });

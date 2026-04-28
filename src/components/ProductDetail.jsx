@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from './ui/Nav-Bar';
 
-const SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+const CLOTHING_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+const SHOE_SIZES = ['UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11'];
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -13,15 +14,19 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    const isShoe = product.product_name.toLowerCase().includes('shoes');
+    const needsSize = !['bag', 'flask', 'glove'].some(keyword => product.product_name.toLowerCase().includes(keyword));
+    
+    if (needsSize && !selectedSize) {
       alert('Please select a size');
       return;
     }
+    const finalSize = needsSize ? selectedSize : 'N/A';
     const item = {
       id: product.product_id || id,
       name: product.product_name,
       price: product.product_price,
-      size: selectedSize,
+      size: finalSize,
       qty: quantity,
       image: product.product_image
     };
@@ -141,34 +146,42 @@ export default function ProductDetail() {
           )}
 
           {/* Size */}
-          <div style={{ marginBottom: '28px' }}>
-            <p style={{ fontFamily: 'monospace', fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
-              Size:
-            </p>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              {SIZES.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  style={{
-                    width: '52px',
-                    height: '44px',
-                    border: selectedSize === size ? '2px solid #c9a22a' : '1px solid #ddd',
-                    borderRadius: '4px',
-                    backgroundColor: selectedSize === size ? '#fdf6e3' : '#f0efed',
-                    color: selectedSize === size ? '#c9a22a' : '#555',
-                    fontFamily: 'monospace',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  {size}
-                </button>
-              ))}
+          {!['bag', 'flask', 'glove'].some(keyword => product.product_name.toLowerCase().includes(keyword)) ? (
+            <div style={{ marginBottom: '28px' }}>
+              <p style={{ fontFamily: 'monospace', fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
+                {product.product_name.toLowerCase().includes('shoes') ? 'UK Size:' : 'Size:'}
+              </p>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                {(product.product_name.toLowerCase().includes('shoes') ? SHOE_SIZES : CLOTHING_SIZES).map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    style={{
+                      width: product.product_name.toLowerCase().includes('shoes') ? '70px' : '52px',
+                      height: '44px',
+                      border: selectedSize === size ? '2px solid #c9a22a' : '1px solid #ddd',
+                      borderRadius: '4px',
+                      backgroundColor: selectedSize === size ? '#fdf6e3' : '#f0efed',
+                      color: selectedSize === size ? '#c9a22a' : '#555',
+                      fontFamily: 'monospace',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div style={{ marginBottom: '28px' }}>
+              <p style={{ fontFamily: 'monospace', fontSize: '14px', color: '#888' }}>
+                * One Size / No Size selection required
+              </p>
+            </div>
+          )}
 
           {/* Quantity */}
           <div style={{ marginBottom: '36px' }}>
