@@ -7,14 +7,14 @@ export default function AboutUs() {
       nickname: "Thyme 6788235",
       role: "FOUNDER & CEO",
       email: "teethut.tee@student.mahidol.ac.th",
-      image: "/images/Thyme.jpg" 
+      image: "/images/Tam.jpg" 
     },
     {
       name: "Mr.Phoonyaphut Junsiri",
       nickname: "Shogun 6788063",
       role: "CO-FOUNDER & CTO",
       email: "phoonyaphat.jun@student.mahidol.ac.th",
-      image: "/images/shogun.png"
+      image: "/images/Shogun.jpg"
     },
     {
       name: "Ms.Pichayapa Jirapong",
@@ -28,7 +28,7 @@ export default function AboutUs() {
       nickname: "Bam 6788072",
       role: "CO-FOUNDER & CFO",
       email: "barameeporn.niy@student.mahidol.ac.th",
-      image: "/images/bam.png"
+      image: "/images/Bam.jpg"
     }
   ];
 

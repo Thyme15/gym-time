@@ -94,7 +94,7 @@ export default function ProductDetail() {
         <div style={{
           flexShrink: 0,
           width: '340px',
-          backgroundColor: '#111',
+          backgroundColor: '#cfccc2',
           borderRadius: '4px',
           overflow: 'hidden',
         }}>
@@ -104,7 +104,7 @@ export default function ProductDetail() {
               `https://placehold.co/340x460/111111/c9a22a?text=${encodeURIComponent(product.product_name)}`
             }
             alt={product.product_name}
-            style={{ width: '100%', height: '460px', objectFit: 'cover', display: 'block' }}
+            style={{ width: '100%', height: '460px', objectFit: 'contain', display: 'block' }}
           />
         </div>
 

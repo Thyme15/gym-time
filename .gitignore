@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 public/images/.env
-.env.backup
-.env
+//.env.backup
+//.env
